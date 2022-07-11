@@ -8,7 +8,7 @@ ADD environment.yml /
 
 RUN conda install mamba -n base -c conda-forge -y
 RUN mamba env create -f /environment.yml
-ENV PATH /opt/conda/envs/circall/bin:$PATH
+ENV PATH /opt/conda/envs/rasqual/bin:$PATH
 
 # RASQUAL
 RUN git clone https://github.com/kauralasoo/rasqual.git /rasqual && \
