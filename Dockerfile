@@ -5,6 +5,7 @@ LABEL authors="Dat T Nguyen" \
       description="Docker image containing all requirements for running RASQUAL" 
 
 RUN apt-get update && apt-get install -y \
+    apt-utils \
     software-properties-common \
     git
 
