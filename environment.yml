@@ -1,9 +1,0 @@
-name: rasqual
-channels:
-  - bioconda
-  - conda-forge
-  - defaults
-dependencies:
-  # for RASQUAL
-  - clapack
-  - gsl

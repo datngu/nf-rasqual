@@ -1,0 +1,15 @@
+name: rasqual
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - tabix
+  - bcftools
+  - vcftools
+  - pandas
+  - argparse
+  - subprocess
+  - scipy
+  - fileinput
+  - 
