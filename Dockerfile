@@ -1,11 +1,10 @@
-FROM ubuntu:18.04
+FROM ubuntu:16.10
 
 MAINTAINER Dat T Nguyen "ndat<at>utexas.edu"
 LABEL authors="Dat T Nguyen" \
       description="Docker image containing all requirements for running RASQUAL" 
 
 RUN apt-get update && apt-get install -y \
-    apt-utils \
     software-properties-common \
     git
 
@@ -20,7 +19,7 @@ RUN add-apt-repository -y universe && apt-get install -y \
     make \
     zlib1g-dev 
 
-RUN git clone --depth 1 https://github.com/dg13/rasqual.git /rasqual && \
+RUN git clone https://github.com/kauralasoo/rasqual.git /rasqual && \
      make -C /rasqual/src && \
      make -C /rasqual/src/ASVCF && \
      cp /rasqual/src/rasqual /usr/bin
