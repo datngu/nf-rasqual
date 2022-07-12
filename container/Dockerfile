@@ -17,7 +17,7 @@ ADD lib_src/gsl-2.5.tar.gz /gsl-2.5.tar.gz
 ADD lib_src/rasqual_kauralasoo.tgz /rasqual.tgz
 
 # CLAPACK
-RUN tar zxvf clapack-3.2.1.tgz
+RUN tar zxvf /clapack-3.2.1.tgz
 WORKDIR /CLAPACK-3.2.1
 COPY make.inc.example make.inc
 RUN make
@@ -28,7 +28,7 @@ RUN ln -s blas_LINUX.a libblas.a
 WORKDIR /
 
 # gsl
-RUN tar zxvf gsl-2.5.tar.gz
+RUN tar /zxvf gsl-2.5.tar.gz
 WORKDIR /gsl-2.5
 RUN ./configure --prefix=$PWD
 RUN make
