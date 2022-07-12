@@ -15,8 +15,8 @@ RUN apt-get update && apt-get install -y \
 # ADD lib_src/clapack-3.2.1.tgz /clapack-3.2.1.tgz
 # ADD lib_src/gsl-2.5.tar.gz /gsl-2.5.tar.gz
 # ADD lib_src/rasqual_kauralasoo.tgz /rasqual.tgz
-RUN wget http://www.netlib.org/clapack/clapack.tgz clapack-3.2.1.tgz
-RUN wget https://ftp.gnu.org/gnu/gsl/gsl-2.5.tar.gz gsl-2.5.tar.gz
+RUN wget http://www.netlib.org/clapack/clapack.tgz -O clapack-3.2.1.tgz
+RUN wget https://ftp.gnu.org/gnu/gsl/gsl-2.5.tar.gz -O gsl-2.5.tar.gz
 RUN git clone https://github.com/kauralasoo/rasqual.git /rasqual
 
 # CLAPACK
