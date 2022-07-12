@@ -30,7 +30,7 @@ apt-get update && apt-get install -y \
 # crtl p q
 
 # copy libs
-docker cp lib_src/clapack.tgz ras:clapack-3.2.1.tgz
+docker cp lib_src/clapack-3.2.1.tgz ras:clapack-3.2.1.tgz
 docker cp lib_src/gsl-2.5.tar.gz ras:/gsl-2.5.tar.gz
 docker cp lib_src/rasqual_kauralasoo.tgz ras:/rasqual.tgz
 

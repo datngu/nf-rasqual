@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y \
     libz-dev
 
 # copy libs
-ADD lib_src/clapack.tgz /clapack-3.2.1.tgz
+ADD lib_src/clapack-3.2.1.tgz /clapack-3.2.1.tgz
 ADD lib_src/gsl-2.5.tar.gz /gsl-2.5.tar.gz
 ADD lib_src/rasqual_kauralasoo.tgz /rasqual.tgz
 
