@@ -65,19 +65,19 @@ make install
 cd /
 
 # RASQUAL
-ENV CFLAGS -I/CLAPACK-3.2.1/INCLUDE -I/CLAPACK-3.2.1/F2CLIBS -I/gsl-2.5:$CFLAGS
-ENV LDFLAGS -L/CLAPACK-3.2.1 -L/CLAPACK-3.2.1/F2CLIBS -L/gsl-2.5/lib:$LDFLAGS
-ENV LD_LIBRARY_PATH /gsl-2.5/lib:$LD_LIBRARY_PATH
+export CFLAGS="-I/CLAPACK-3.2.1/INCLUDE -I/CLAPACK-3.2.1/F2CLIBS -I/gsl-2.5"
+export LDFLAG=" -L/CLAPACK-3.2.1 -L/CLAPACK-3.2.1/F2CLIBS -L/gsl-2.5/lib"
+export LD_LIBRARY_PATH="ARY_PATH /gsl-2.5/lib"
 
-RUN tar zxvf rasqual.tgz
-WORKDIR /rasqual/src
-RUN make
-RUN make install
-WORKDIR /rasqual/src/ASVCF
-RUN make
-RUN make install
+tar zxvf rasqual.tgz
+cd /rasqual/src
+make
+make install
+cd /rasqual/src/ASVCF
+make
+make install
 
-WORKDIR /
+cd /
 ENV PATH /rasqual/src:$PATH
 ENV PATH /rasqual/src/ASVCF:$PATH
 
