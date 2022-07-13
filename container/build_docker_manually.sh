@@ -1,8 +1,8 @@
-## BUILD DOCKER AUTOMATICLY - not working
-docker build -t rasqual:v0.0.0 -f Dockerfile .
-# v0.0.0
-docker tag rasqual:v0.0.0 ndatth/rasqual:v0.0.0
-docker push ndatth/rasqual:v0.0.0
+# ## BUILD DOCKER AUTOMATICLY - not working right now.
+# docker build -t rasqual:v0.0.0 -f Dockerfile .
+# # v0.0.0
+# docker tag rasqual:v0.0.0 ndatth/rasqual:v0.0.0
+# docker push ndatth/rasqual:v0.0.0
 
 # it is noted that usesing Dockerfile will results in erorrs in CLAPACK installation - I don't know why and I don't know how to fix it
 docker run -it -h datn --name ras nfcore/base:2.1
@@ -49,7 +49,7 @@ export LDFLAGS="-L/CLAPACK-3.2.1 -L/CLAPACK-3.2.1/F2CLIBS -L/gsl-2.5/lib"
 export LD_LIBRARY_PATH="/gsl-2.5/lib":$LD_LIBRARY_PATH
 
 # rasqual
-git clone https://github.com/kauralasoo/rasqual.git /rasqual
+git clone https://github.com/natsuhiko/rasqual.git /rasqual
 cd /rasqual/src/
 make
 #make install
@@ -66,3 +66,18 @@ wget https://raw.githubusercontent.com/datngu/nf-rasqual/main/container/environm
 conda install mamba -n base -c conda-forge -y
 mamba env create -f /environment.yml
 export PATH=/opt/conda/envs/rasqual/bin:$PATH
+
+######################################
+# EXPORT IMAGE
+######################################
+docker commit --change "LABEL Docker image containing all requirements for running RASQUAL" ras ndatth/rasqual:v0.0.0
+# docker tag rasqual:v0.0.0 ndatth/rasqual:v0.0.0
+docker push ndatth/rasqual:v0.0.0
+
+######################################
+# TESTING docker
+######################################
+
+docker run --rm -v $PWD:/data ndatth/rasqual:v0.0.0 rasqual
+
+docker run -it --rm -v $PWD:/data ndatth/rasqual:v0.0.0 createASVCF.sh
