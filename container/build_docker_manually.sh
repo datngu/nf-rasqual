@@ -68,7 +68,7 @@ mamba env create -f /environment.yml
 conda activate rasqual
 #export PATH=/opt/conda/envs/rasqual/bin:$PATH
 ln -s /rasqual/src/rasqual /bin/rasqual
-ln -s /rasqual/src/rasqual /bin/createASVCF.sh
+ln -s /rasqual/src/ASVCF/createASVCF.sh /bin/createASVCF.sh
 
 
 ######################################
