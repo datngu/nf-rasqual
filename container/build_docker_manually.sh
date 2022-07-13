@@ -58,14 +58,18 @@ chmod +x *
 make
 
 cd /
-export PATH=/rasqual/src:$PATH
-export PATH=/rasqual/src/ASVCF:$PATH
+# export PATH=/rasqual/src:$PATH
+# export PATH=/rasqual/src/ASVCF:$PATH
 
 # environment for running supporting scripts
 wget https://raw.githubusercontent.com/datngu/nf-rasqual/main/container/environment.yml -O /environment.yml
 conda install mamba -n base -c conda-forge -y
 mamba env create -f /environment.yml
-export PATH=/opt/conda/envs/rasqual/bin:$PATH
+conda activate rasqual
+#export PATH=/opt/conda/envs/rasqual/bin:$PATH
+ln -s /rasqual/src/rasqual /bin/rasqual
+ln -s /rasqual/src/rasqual /bin/createASVCF.sh
+
 
 ######################################
 # EXPORT IMAGE
