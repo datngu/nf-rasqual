@@ -17,11 +17,10 @@ apt-get update && apt-get install -y \
     libgsl-dev
 
 
-wget http://www.netlib.org/clapack/clapack.tgz -O clapack-3.2.1.tgz
-wget https://ftp.gnu.org/gnu/gsl/gsl-2.5.tar.gz -O gsl-2.5.tar.gz
-git clone https://github.com/kauralasoo/rasqual.git /rasqua
 
 # CLAPACK install
+wget http://www.netlib.org/clapack/clapack.tgz -O clapack-3.2.1.tgz
+
 tar zxvf clapack-3.2.1.tgz
 cd /CLAPACK-3.2.1
 mv make.inc.example make.inc
@@ -35,32 +34,36 @@ ln -s blas_LINUX.a libblas.a
 cd /
 
 # gsl
+wget https://ftp.gnu.org/gnu/gsl/gsl-2.5.tar.gz -O gsl-2.5.tar.gz
+
 tar zxvf gsl-2.5.tar.gz
 cd /gsl-2.5
 ./configure --prefix=$PWD
 make
 make install
 cd /
+
 ## add libraries
 export CFLAGS="-I/CLAPACK-3.2.1/INCLUDE -I/CLAPACK-3.2.1/F2CLIBS -I/gsl-2.5"
 export LDFLAGS="-L/CLAPACK-3.2.1 -L/CLAPACK-3.2.1/F2CLIBS -L/gsl-2.5/lib"
 export LD_LIBRARY_PATH="/gsl-2.5/lib":$LD_LIBRARY_PATH
 
-cd /rasqual/src
+# rasqual
+git clone https://github.com/kauralasoo/rasqual.git /rasqual
+cd /rasqual/src/
 make
-make install
-cd /rasqual/src/ASVCF
+#make install
+cd /rasqual/src/ASVCF/
 make
-make install
 
 cd /
 export PATH=/rasqual/src:$PATH
 export PATH=/rasqual/src/ASVCF:$PATH
 
 # environment for running supporting scripts
-ADD environment.yml /
-RUN conda install mamba -n base -c conda-forge -y
-RUN mamba env create -f /environment.yml
-ENV PATH /opt/conda/envs/rasqual/bin:$PATH
+wget https://raw.githubusercontent.com/datngu/nf-rasqual/main/container/environment.yml -O /environment.yml
+conda install mamba -n base -c conda-forge -y
+mamba env create -f /environment.yml
+export PATH=/opt/conda/envs/rasqual/bin:$PATH
 
 
