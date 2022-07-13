@@ -11,6 +11,8 @@ RUN apt-get update && apt-get install -y \
     git \
     tar \
     libz-dev \
+    liblapack-dev \
+    libgsl-dev \
     tabix \
     bcftools
 

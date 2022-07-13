@@ -11,6 +11,7 @@ apt-get update && apt-get install -y \
     make \
     gcc \
     wget \
+    git \
     tar \
     libz-dev \
     liblapack-dev \
