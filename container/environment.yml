@@ -12,3 +12,5 @@ dependencies:
   - subprocess
   - scipy
   - fileinput
+  - r-base=4.0.2
+  - r-data.table

@@ -25,7 +25,15 @@ apt-get update && apt-get install -y \
     gcc \
     wget \
     tar \
-    libz-dev
+    libz-dev \
+    liblapack-dev \
+    libgsl-dev
+
+
+# apt-get install -y f2c
+# apt-get install -y libblas-dev
+# apt-get install -y libclapack-dev
+# apt-get install -y zlib1g-dev
 
 # crtl p q
 
@@ -70,11 +78,12 @@ export CFLAGS="-I/CLAPACK-3.2.1/INCLUDE -I/CLAPACK-3.2.1/F2CLIBS -I/gsl-2.5"
 export LDFLAGS="-L/CLAPACK-3.2.1 -L/CLAPACK-3.2.1/F2CLIBS -L/gsl-2.5/lib"
 export LD_LIBRARY_PATH="/gsl-2.5/lib":$LD_LIBRARY_PATH
 
-export CFLAGS="-I/CLAPACK-3.2.1/INCLUDE -I/CLAPACK-3.2.1/F2CLIBS -I/gsl-2.5"
-export LDFLAGS="-L/CLAPACK-3.2.1 -L/CLAPACK-3.2.1/F2CLIBS -L/gsl-2.5/lib"
-export LD_LIBRARY_PATH=/gsl-2.5/lib:$LD_LIBRARY_PATH
+# export CFLAGS="-I/CLAPACK-3.2.1/INCLUDE -I/CLAPACK-3.2.1/F2CLIBS -I/gsl-2.5"
+# export LDFLAGS="-L/CLAPACK-3.2.1 -L/CLAPACK-3.2.1/F2CLIBS -L/gsl-2.5/lib"
+# export LD_LIBRARY_PATH=/gsl-2.5/lib:$LD_LIBRARY_PATH
 
-tar zxvf rasqual.tgz
+#tar zxvf rasqual.tgz
+git clone https://github.com/kauralasoo/rasqual.git /rasqual
 cd /rasqual/src
 make
 make install
