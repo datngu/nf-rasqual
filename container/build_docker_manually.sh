@@ -1,3 +1,9 @@
+## BUILD DOCKER AUTOMATICLY - not working
+docker build -t rasqual:v0.0.0 -f Dockerfile .
+# v0.0.0
+docker tag rasqual:v0.0.0 ndatth/rasqual:v0.0.0
+docker push ndatth/rasqual:v0.0.0
+
 # it is noted that usesing Dockerfile will results in erorrs in CLAPACK installation - I don't know why and I don't know how to fix it
 docker run -it -h datn --name ras nfcore/base:2.1
 
