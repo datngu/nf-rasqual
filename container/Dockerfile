@@ -50,7 +50,7 @@ RUN git clone https://github.com/kauralasoo/rasqual.git /rasqual
 #export LDFLAGS="-L/CLAPACK-3.2.1 -L/CLAPACK-3.2.1/F2CLIBS -L/gsl-2.5/lib"
 #export LD_LIBRARY_PATH=/gsl-2.5/lib:$LD_LIBRARY_PATH
 
-RUN tar -xzf rasqual.tgz
+#RUN tar -xzf rasqual.tgz
 WORKDIR /rasqual/src
 RUN make
 RUN make install
