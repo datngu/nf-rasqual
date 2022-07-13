@@ -47,6 +47,7 @@ WORKDIR /rasqual/src
 RUN make
 RUN make install
 WORKDIR /rasqual/src/ASVCF
+RUN chmod +x *
 RUN make
 RUN make install
 

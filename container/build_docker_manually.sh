@@ -54,6 +54,7 @@ cd /rasqual/src/
 make
 #make install
 cd /rasqual/src/ASVCF/
+chmod +x *
 make
 
 cd /
@@ -65,5 +66,3 @@ wget https://raw.githubusercontent.com/datngu/nf-rasqual/main/container/environm
 conda install mamba -n base -c conda-forge -y
 mamba env create -f /environment.yml
 export PATH=/opt/conda/envs/rasqual/bin:$PATH
-
-
