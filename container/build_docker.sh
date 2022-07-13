@@ -67,8 +67,12 @@ cd /
 
 # RASQUAL
 export CFLAGS="-I/CLAPACK-3.2.1/INCLUDE -I/CLAPACK-3.2.1/F2CLIBS -I/gsl-2.5"
-export LDFLAG=" -L/CLAPACK-3.2.1 -L/CLAPACK-3.2.1/F2CLIBS -L/gsl-2.5/lib"
-export LD_LIBRARY_PATH="ARY_PATH /gsl-2.5/lib"
+export LDFLAGS="-L/CLAPACK-3.2.1 -L/CLAPACK-3.2.1/F2CLIBS -L/gsl-2.5/lib"
+export LD_LIBRARY_PATH="/gsl-2.5/lib":$LD_LIBRARY_PATH
+
+export CFLAGS="-I/CLAPACK-3.2.1/INCLUDE -I/CLAPACK-3.2.1/F2CLIBS -I/gsl-2.5"
+export LDFLAGS="-L/CLAPACK-3.2.1 -L/CLAPACK-3.2.1/F2CLIBS -L/gsl-2.5/lib"
+export LD_LIBRARY_PATH=/gsl-2.5/lib:$LD_LIBRARY_PATH
 
 tar zxvf rasqual.tgz
 cd /rasqual/src
@@ -79,8 +83,8 @@ make
 make install
 
 cd /
-ENV PATH /rasqual/src:$PATH
-ENV PATH /rasqual/src/ASVCF:$PATH
+export PATH=/rasqual/src:$PATH
+export PATH=/rasqual/src/ASVCF:$PATH
 
 # environment for running supporting scripts
 ADD environment.yml /
