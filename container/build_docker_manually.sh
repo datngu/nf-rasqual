@@ -5,7 +5,7 @@
 # docker push ndatth/rasqual:v0.0.0
 
 # it is noted that usesing Dockerfile will results in erorrs in CLAPACK installation - I don't know why and I don't know how to fix it
-docker run -it -h datn --name ras nfcore/base:2.1
+docker run -it -h datn --name ras ubuntu:18.04
 
 apt-get update && apt-get install -y \
     make \
@@ -58,15 +58,7 @@ chmod +x *
 make
 
 cd /
-# export PATH=/rasqual/src:$PATH
-# export PATH=/rasqual/src/ASVCF:$PATH
 
-# environment for running supporting scripts
-wget https://raw.githubusercontent.com/datngu/nf-rasqual/main/container/environment.yml -O /environment.yml
-conda install mamba -n base -c conda-forge -y
-mamba env create -f /environment.yml
-conda activate rasqual
-#export PATH=/opt/conda/envs/rasqual/bin:$PATH
 ln -s /rasqual/src/rasqual /bin/rasqual
 ln -s /rasqual/src/ASVCF/createASVCF.sh /bin/createASVCF.sh
 

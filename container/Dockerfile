@@ -1,4 +1,4 @@
-FROM nfcore/base:2.1
+FROM ubuntu:18.04
 
 LABEL authors="Dat T Nguyen - ndat<at>utexas.edu" \
       description="Docker image containing all requirements for running RASQUAL" 
@@ -54,9 +54,3 @@ RUN make install
 WORKDIR /
 ENV PATH /rasqual/src:$PATH
 ENV PATH /rasqual/src/ASVCF:$PATH
-
-# environment for running supporting scripts
-ADD environment.yml /
-RUN conda install mamba -n base -c conda-forge -y
-RUN mamba env create -f /environment.yml
-ENV PATH /opt/conda/envs/rasqual/bin:$PATH
