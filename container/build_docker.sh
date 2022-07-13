@@ -41,7 +41,8 @@ docker attach ras
 tar zxvf clapack-3.2.1.tgz
 cd /CLAPACK-3.2.1
 mv make.inc.example make.inc
-#RUN 
+#RUN
+ulimit -s 100000 
 make
 ## link file
 #RUN 
