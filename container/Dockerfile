@@ -23,6 +23,8 @@ RUN git clone https://github.com/kauralasoo/rasqual.git /rasqual
 RUN tar -xzf clapack-3.2.1.tgz
 WORKDIR /CLAPACK-3.2.1
 RUN ln -s make.inc.example make.inc
+# fix memory errors in compiling.
+RUN ulimit -s unlimited
 RUN make
 ## link file
 RUN ln -s lapack_LINUX.a liblapack.a
