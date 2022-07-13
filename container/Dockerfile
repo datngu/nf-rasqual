@@ -10,7 +10,9 @@ RUN apt-get update && apt-get install -y \
     wget \
     git \
     tar \
-    libz-dev
+    libz-dev \
+    tabix \
+    bcftools
 
 RUN wget http://www.netlib.org/clapack/clapack.tgz -O clapack-3.2.1.tgz
 RUN wget https://ftp.gnu.org/gnu/gsl/gsl-2.5.tar.gz -O gsl-2.5.tar.gz

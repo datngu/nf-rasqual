@@ -14,7 +14,10 @@ apt-get update && apt-get install -y \
     tar \
     libz-dev \
     liblapack-dev \
-    libgsl-dev
+    libgsl-dev \
+    tabix \
+    bcftools
+    
 
 
 
