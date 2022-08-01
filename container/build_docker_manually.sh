@@ -18,8 +18,6 @@ apt-get update && apt-get install -y \
     libgsl-dev \
     tabix \
     bcftools
-    
-
 
 
 # CLAPACK install
@@ -66,6 +64,12 @@ cd /
 ln -s /rasqual/src/rasqual /bin/rasqual
 ln -s /rasqual/src/ASVCF/createASVCF.sh /bin/createASVCF.sh
 
+## intall r-base
+TZ='Europe/Oslo'
+export TZ
+ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+apt-get install -y r-base
+
 
 ######################################
 # EXPORT IMAGE
@@ -73,6 +77,9 @@ ln -s /rasqual/src/ASVCF/createASVCF.sh /bin/createASVCF.sh
 docker commit --change "LABEL Docker image containing all requirements for running RASQUAL" ras ndatth/rasqual:v0.0.0
 # docker tag rasqual:v0.0.0 ndatth/rasqual:v0.0.0
 docker push ndatth/rasqual:v0.0.0
+
+docker start ras
+docker attach ras
 
 ######################################
 # TESTING docker
