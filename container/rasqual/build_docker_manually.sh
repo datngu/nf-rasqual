@@ -65,6 +65,32 @@ ln -s /rasqual/src/rasqual /bin/rasqual
 ln -s /rasqual/src/ASVCF/createASVCF.sh /bin/createASVCF.sh
 
 
+# time zone
+TZ='Europe/Oslo'
+export TZ
+ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+## intall r-base
+apt-get install -y r-base
+# libs needed for devtools
+apt-get install -y libcurl4-openssl-dev libssl-dev libfontconfig1-dev libxml2-dev libharfbuzz-dev libfribidi-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev
+
+# install rasqualTools
+R -e 'install.packages("usethis")'
+R -e 'install.packages("pkgdown")'
+R -e 'install.packages("rcmdcheck")'
+R -e 'install.packages("roxygen2")'
+R -e 'install.packages("rversions")'
+R -e 'install.packages("urlchecker")'
+R -e 'install.packages("devtools")'
+R -e 'source("https://bioconductor.org/biocLite.R"); biocLite("GenomicRanges"); biocLite("Rsamtools")'
+R -e 'devtools::install_github("kauralasoo/rasqual/rasqualTools")'
+
+
+
+
+
+
+
 ######################################
 # EXPORT IMAGE
 ######################################
@@ -84,24 +110,3 @@ docker run --rm -v $PWD:/data ndatth/rasqual:v0.0.0 rasqual
 docker run -it --rm -v $PWD:/data ndatth/rasqual:v0.0.0 createASVCF.sh
 
 
-
-
-# ## intall r-base
-# # time zone
-# TZ='Europe/Oslo'
-# export TZ
-# ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-# apt-get install -y r-base
-# # libs needed for devtools
-# apt-get install -y libcurl4-openssl-dev libssl-dev libfontconfig1-dev libxml2-dev libharfbuzz-dev libfribidi-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev
-
-
-# R -e 'install.packages("usethis")'
-# R -e 'install.packages("pkgdown")'
-# R -e 'install.packages("rcmdcheck")'
-# R -e 'install.packages("roxygen2")'
-# R -e 'install.packages("rversions")'
-# R -e 'install.packages("urlchecker")'
-# R -e 'install.packages("devtools")'
-# R -e 'source("https://bioconductor.org/biocLite.R"); biocLite("GenomicRanges"); biocLite("Rsamtools")'
-# R -e 'devtools::install_github("kauralasoo/rasqual/rasqualTools")'
