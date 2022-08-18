@@ -8,7 +8,7 @@ dependencies:
   ## r-packages
   - r-peer
   - r-coloc=3.1
-  - r-gkmsvm
+  #- r-gkmsvm
   - r-devtools
   - r-foreach
   - r-doparallel
