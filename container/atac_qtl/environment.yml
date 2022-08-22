@@ -20,6 +20,7 @@ dependencies:
   - bioconda::homer
   - bioconda::ldsc
   - bioconda::bedtools
+  - bioconda::macs2
   - bioconda::samtools
   - bioconda::subread
   - bioconda::picard
