@@ -81,7 +81,8 @@ workflow {
     /// ATAC QTL
     //atac_bam_ch.collect().view()
     BAM_rename(params.meta, atac_bam_ch.collect())
-    BAM_rename.out.view()
+    //BAM_rename.out.view()
+    ADD_AS_vcf()
 }
 
 
@@ -118,6 +119,6 @@ process ADD_AS_vcf {
 
     script:
     """
-    add_AS_vcf.sh ${meta}
+    atac_add_AS_vcf.sh $in_vcf genotype_added_AS.vcf.gz
     """
 }
