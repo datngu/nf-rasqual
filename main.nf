@@ -77,7 +77,7 @@ workflow {
     peer_list_ch = channel.from(params.peer)
 
     /// ATAC QTL
-    BAM_rename(atac_bam_ch)
+    BAM_rename(params.meta, atac_bam_ch)
 }
 
 
