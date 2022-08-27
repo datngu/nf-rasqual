@@ -94,6 +94,7 @@ process BAM_rename {
 
     output:
     path "*.bam"
+    path "*.bai"
 
     script:
     """
