@@ -17,4 +17,6 @@ for i in meta.index:
     new_bam2 = meta['genotype_id'][i] + ".bam.bai"
     old_bam2 = meta['attac_bam_id'][i] + ".bai"
     cmd2 = "cp " + old_bam2 + " " + new_bam2
+    print(cmd2)
+    os.system(cmd2)
 
