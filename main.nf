@@ -20,26 +20,29 @@
 params.genome          = "$baseDir/data/ref/genome.fa"
 params.cdna            = "$baseDir/data/ref/cdna.fa"
 params.annotation      = "$baseDir/data/ref/annotation.gtf"
-params.atac_reads      = "$baseDir/data/atac_reads/*_{1,2}.fastq.gz"
-params.rna_reads       = "$baseDir/data/rna_reads/*_{1,2}.fastq.gz"
+params.atac_bam        = "$baseDir/data/atac_bam/*.bam"
+params.atac_count      = "$baseDir/data/atac_count.tsv"
 params.genotype        = "$baseDir/data/genotype.vcf.gz"
-params.meta            = "$baseDir/data/meta.csv"
+params.meta            = "$baseDir/data/meta/brain.csv"
 params.outdir          = "results"
 
 // running options
 params.chrom           = 1..22 
 params.peer            = 1..20 
-params.genotype_PCs    = 4 
+params.genotype_PCs    = 3 
 params.exp_prop        = 0.5
+params.maf             = 0.05
 params.fdr             = 0.1
-params.cis_window      = 500000
+params.atac_window     = 50000
+params.eqtl_window     = 1000000
 
 // pipeline options
 params.attac_qtl         = true
-params.expression_qtl    = true
-params.circexplorer2     = true
-params.salmon            = true
-params.leafcutter        = true
+params.eqtl_qtl          = true
+// params.expression_qtl    = true
+// params.circexplorer2     = true
+// params.salmon            = true
+// params.leafcutter        = true
 
 log.info """\
 ================================================================
@@ -47,31 +50,51 @@ log.info """\
 ================================================================
     genome              : $params.genome
     cdna                : $params.cdna
-    bsj                 : $params.bsj
     annotation          : $params.annotation
-    reads               : $params.reads
+    atac_bam            : $params.atac_bam
+    atac_count          : $params.atac_count
     genotype            : $params.genotype 
     meta                : $params.meta
     outdir              : $params.outdir
     chrom               : $params.chrom
-    bsj_filter          : $params.bsj_filter
-    exp_prop            : $params.exp_prop
     peer                : $params.peer
     maf                 : $params.maf
     fdr                 : $params.fdr
-    fastqtl_window      : $params.fastqtl_window
+    eqtl_window         : $params.eqtl_window
+    atac_window         : $params.atac_window
     genotype_PCs        : $params.genotype_PCs
-    circall             : $params.circall
-    ciri2               : $params.ciri2
-    circexplorer2       : $params.circexplorer2
-    salmon              : $params.salmon
-    leafcutter          : $params.leafcutter
+    attac_qtl           : $params.attac_qtl
+    eqtl_qtl            : $params.eqtl_qtl
 ================================================================
 """
 
 
 workflow {
 
+    /// channel general processing
+    atac_bam_ch = channel.fromPath( params.atac_bam, checkIfExists: true )
+    chrom_list_ch = channel.from(params.chrom)
+    peer_list_ch = channel.from(params.peer)
+
+    /// ATAC QTL
+    BAM_rename(atac_bam_ch)
+}
 
 
+process BAM_rename {
+    container 'ndatth/rasqual:v0.0.0'
+    publishDir 'bam_dir'
+    memory '8 GB'
+
+    input:
+    path meta
+    path bamfiles
+
+    output:
+    path "*.bam"
+
+    script:
+    """
+    rename_bam.py ${meta}
+    """
 }

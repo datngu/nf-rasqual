@@ -17,7 +17,7 @@ cd /mnt/users/ngda/ngs_data/atlantic_salmon/wgs
 
 for i in {1..29}
 do
-    bcftools index -t -f vcf_cp_raw/ssa${i}.DP10.GQ10.MS0.7.recode.vcf.gz &
+    bcftools index -t -f vcf_cp_raw/ssa${i}.DP10.GQ10.MS0.7.recode.vcf.gz
 done
 
 
@@ -30,3 +30,18 @@ do
     # phasing
     java -jar $beagle4 gt=vcf_phased/ssa${i}_tem.vcf.gz nthreads=16 niterations=20 gprobs=true out=vcf_phased/ssa${i}
 done
+
+
+## add GP
+for i in {1..29}
+do
+    /mnt/users/ngda/sofware/add_GP_vcf.py vcf_phased/ssa${i}_tem.vcf.gz vcf_phased/ssa${i}.vcf.gz vcf_phased/ssa${i}_added_GP.vcf
+    bgzip -f vcf_phased/ssa${i}_added_GP.vcf
+done
+
+for i in {1..29}
+do
+    echo vcf_phased/ssa${i}_added_GP.vcf.gz >> file_list.txt
+done
+
+bcftools concat -n -f file_list.txt -Oz -o all_chr_added_GP.vcf.gz
