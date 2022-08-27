@@ -1,6 +1,7 @@
 #!/usr/bin/env Rscript
 
 options(stringsAsFactors=FALSE)
+args = commandArgs(trailingOnly = TRUE)
 
 meta_path = out_file = args[1]
 # meta_path = "data/meta/brain.csv"
