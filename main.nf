@@ -94,7 +94,7 @@ process BAM_rename {
     path bamfiles
 
     output:
-    path "*{.bam,.bai}"
+    path "copied_files/*{.bam,.bai}"
 
     script:
     """
