@@ -16,8 +16,8 @@ for( i in 1: nrow(meta)){
     print(cmd)
     system(cmd)
     # bai
-    new_bai = paste0(meta$genotype_id[i], ".bam.bai")
-    old_bai = paste0("copied_files/", meta$attac_bam_id[i], ".bai")
+    new_bai = paste0("copied_files/", meta$genotype_id[i], ".bam.bai")
+    old_bai = paste0(meta$attac_bam_id[i], ".bai")
     cmd2 = paste0("cp -L ", old_bai, " ", new_bai)
     print(cmd2)
     system(cmd2)
