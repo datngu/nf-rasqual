@@ -82,7 +82,7 @@ workflow {
     //atac_bam_ch.collect().view()
     BAM_rename(params.meta, atac_bam_ch.collect())
     //BAM_rename.out.view()
-    ADD_AS_vcf()
+    ADD_AS_vcf(params.genotype, BAM_rename.out)
 }
 
 
@@ -107,7 +107,7 @@ process BAM_rename {
 
 process ADD_AS_vcf {
     container 'ndatth/rasqual:v0.0.0'
-    publishDir 'AS_vcf'
+    publishDir 'atac_AS_vcf'
     memory '8 GB'
 
     input:
