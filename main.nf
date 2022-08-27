@@ -81,6 +81,7 @@ workflow {
     /// ATAC QTL
     //atac_bam_ch.collect().view()
     BAM_rename(params.meta, atac_bam_ch.collect())
+    BAM_rename.out.view()
 }
 
 
@@ -99,5 +100,24 @@ process BAM_rename {
     script:
     """
     rename_bam.R ${meta}
+    """
+}
+
+
+process ADD_AS_vcf {
+    container 'ndatth/rasqual:v0.0.0'
+    publishDir 'AS_vcf'
+    memory '8 GB'
+
+    input:
+    path in_vcf
+    path bamfiles
+
+    output:
+    path "genotype_added_AS.vcf.gz"
+
+    script:
+    """
+    add_AS_vcf.sh ${meta}
     """
 }
