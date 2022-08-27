@@ -5,7 +5,7 @@ import os
 import sys
 
 meta_path = sys.argv[1]
-meta_path = "brain_aqua-faang.csv"
+#meta_path = "data/meta/brain.csv"
 meta = pd.read_csv(meta_path, header = 0)
 #os.getcwd()
 

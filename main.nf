@@ -99,6 +99,6 @@ process BAM_rename {
 
     script:
     """
-    rename_bam.py ${meta}
+    rename_bam.R ${meta}
     """
 }
