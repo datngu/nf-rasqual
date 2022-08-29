@@ -19,7 +19,7 @@ git pull
 
 atac_bam=/mnt/project/Aqua-Faang/seq_results/AtlanticSalmon/BodyMap/ATAC/Brain/results/bwa/mergedLibrary/*{.bam,.bai}
 atac_count=/mnt/project/Aqua-Faang/seq_results/AtlanticSalmon/BodyMap/ATAC/Brain/results/bwa/mergedLibrary/macs/broadPeak/consensus/consensus_peaks.mLb.clN.featureCounts.txt
-genotype=/mnt/users/ngda/ngs_data/atlantic_salmon/wgs/all_chr_added_GP.vcf.gz
+genotype=/mnt/users/ngda/ngs_data/atlantic_salmon/wgs/sorted_all_chr_added_GP.vcf.gz
 
 outdir=results
 

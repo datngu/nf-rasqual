@@ -9,9 +9,12 @@
 
 
 module load BCFtools/1.10.2-GCC-8.3.0
+module load SAMtools/1.11-GCC-10.2.0
+
 beagle4=/mnt/users/ngda/sofware/beagle.27Jan18.7e1.jar
 beagle5=/mnt/users/ngda/sofware/beagle.22Jul22.46e.jar
 
+# singularity run /mnt/users/ngda/proj/paper1/nf-rasqual/work/singularity/ndatth-rasqual-v0.0.0.img
 
 cd /mnt/users/ngda/ngs_data/atlantic_salmon/wgs
 
@@ -45,3 +48,8 @@ do
 done
 
 bcftools concat -n -f file_list.txt -Oz -o all_chr_added_GP.vcf.gz
+
+fai=/mnt/users/ngda/genomes/atlantic_salmon/Salmo_salar.Ssal_v3.1.dna_sm.toplevel.fa.fai
+
+bcftools reheader --fai $fai all_chr_added_GP.vcf.gz | bcftools sort -Oz > sorted_all_chr_added_GP.vcf.gz
+bftools index -t sorted_all_chr_added_GP.vcf.gz
