@@ -35,8 +35,7 @@ mkdir ${home_dir}/brain/bam
 
 for fn in *bam*
 do
-    out_fn=$(echo "$fn" | sed "s/sorted.//")
-	ln -s ${source_data}/${fn} ${home_dir}/brain/bam/${out_fn}
+	cp $fn ${home_dir}/brain/bam/$fn
 done
 
 

@@ -15,7 +15,7 @@ module load singularity/rpm
 cd /mnt/users/ngda/proj/paper1/nf-rasqual
 git pull
 
-atac_bam=/mnt/project/Aqua-Faang/seq_results/AtlanticSalmon/BodyMap/ATAC/Brain/results/bwa/mergedLibrary/*{.bam,.bai}
+atac_bam=/mnt/users/ngda/ngs_data/atlantic_salmon/atac/brain/bam/*{.bam,.bai}
 atac_count=/mnt/project/Aqua-Faang/seq_results/AtlanticSalmon/BodyMap/ATAC/Brain/results/bwa/mergedLibrary/macs/broadPeak/consensus/consensus_peaks.mLb.clN.featureCounts.txt
 genotype=/mnt/users/ngda/ngs_data/atlantic_salmon/wgs/sorted_all_chr_added_GP.vcf.gz
 
