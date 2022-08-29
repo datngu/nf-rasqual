@@ -30,4 +30,4 @@ nextflow run main.nf -resume --atac_bam $atac_bam --atac_count $atac_count --gen
 singularity run /mnt/users/ngda/proj/paper1/nf-rasqual/work/singularity/ndatth-rasqual-v0.0.0.img
 
 RASQUALDIR=/rasqual
-createASVCF.sh paired_end bam_list.txt sorted_all_chr_added_GP.vcf.gz out.vcf.gz atac
+/mnt/users/ngda/proj/paper1/nf-rasqual/bin/createASVCF_fixed_path.sh paired_end bam_list.txt sorted_all_chr_added_GP.vcf.gz out.vcf.gz atac
