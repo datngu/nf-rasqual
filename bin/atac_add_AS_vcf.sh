@@ -7,4 +7,4 @@ ls $PWD/*bam > bam_list.txt
 
 bcftools index -tf $in_vcf
 
-createASVCF.sh paired_end bam_list.txt $in_vcf $out_vcf atac
+createASVCF_fixed_path.sh paired_end bam_list.txt $in_vcf $out_vcf atac

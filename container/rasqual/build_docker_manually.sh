@@ -65,6 +65,13 @@ ln -s /rasqual/src/rasqual /bin/rasqual
 ln -s /rasqual/src/ASVCF/createASVCF.sh /bin/createASVCF.sh
 
 
+# export RASQUALDIR to avoid error in createASVCF.sh
+RASQUALDIR=/rasqual
+export RASQUALDIR
+# install samtools for createASVCF.sh
+apt-get install -y samtools
+
+
 # time zone
 TZ='Europe/Oslo'
 export TZ
@@ -108,5 +115,4 @@ docker attach ras
 docker run --rm -v $PWD:/data ndatth/rasqual:v0.0.0 rasqual
 
 docker run -it --rm -v $PWD:/data ndatth/rasqual:v0.0.0 createASVCF.sh
-
 
