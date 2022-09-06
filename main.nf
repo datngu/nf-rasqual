@@ -3,10 +3,10 @@
 ========================================================================================
                           nf-rasqual
 ========================================================================================
-    RASQUAL Analysis Pipeline.
- https://github.com/datngu/nf-rasqual
- Author: Dat T Nguyen
- Contact: ndat<at>utexas.edu
+                RASQUAL Analysis Pipeline.
+                https://github.com/datngu/nf-rasqual
+                Author: Dat T Nguyen
+                Contact: ndat<at>utexas.edu
 ----------------------------------------------------------------------------------------
 */
 
