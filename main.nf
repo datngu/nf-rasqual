@@ -119,7 +119,6 @@ process ADD_AS_vcf {
 
     script:
     """
-    #atac_add_AS_vcf.sh $in_vcf genotype_added_AS.vcf.gz
     ls \$PWD/*bam > bam_list.txt
     bcftools index -tf $in_vcf
     createASVCF_fixed_path.sh paired_end bam_list.txt $in_vcf genotype_added_AS.vcf.gz atac

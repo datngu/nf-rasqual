@@ -91,6 +91,9 @@ R -e 'install.packages("urlchecker")'
 R -e 'install.packages("devtools")'
 R -e 'source("https://bioconductor.org/biocLite.R"); biocLite("GenomicRanges"); biocLite("Rsamtools")'
 R -e 'devtools::install_github("kauralasoo/rasqual/rasqualTools")'
+# install data.table
+R -e "install.packages('R.utils', repos='http://cran.us.r-project.org')"
+R -e "install.packages('data.table', repos='http://cran.us.r-project.org')"
 
 
 
