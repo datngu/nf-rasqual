@@ -37,7 +37,7 @@ params.atac_window     = 50000
 params.eqtl_window     = 1000000
 
 // pipeline options
-params.attac_qtl         = true
+params.atac_qtl          = true
 params.eqtl_qtl          = true
 // params.expression_qtl    = true
 // params.circexplorer2     = true
@@ -63,7 +63,7 @@ log.info """\
     eqtl_window         : $params.eqtl_window
     atac_window         : $params.atac_window
     genotype_PCs        : $params.genotype_PCs
-    attac_qtl           : $params.attac_qtl
+    atac_qtl            : $params.atac_qtl
     eqtl_qtl            : $params.eqtl_qtl
 ================================================================
 """
