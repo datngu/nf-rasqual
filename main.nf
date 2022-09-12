@@ -191,7 +191,7 @@ process PREPROCESS_atac_qtl {
 
 process RUN_atac_rasqual {
     container 'ndatth/rasqual:v0.0.0'
-    publishDir 'atac_qtl_input'
+    publishDir 'results_rasqual'
     memory '8 GB'
 
     input:
@@ -200,7 +200,7 @@ process RUN_atac_rasqual {
     path split_chrom
 
     output:
-    tuple path("${chr}_rasqual_results*")
+    path("${chr}_rasqual_results*")
 
 
     script:
