@@ -83,7 +83,7 @@ workflow {
     BAM_rename(params.meta, atac_bam_ch.collect())
     ADD_AS_vcf(params.genotype, BAM_rename.out)
     SPLIT_chromosome(chrom_list_ch, ADD_AS_vcf.out, params.atac_count )
-    SPLIT_chromosome.collect().view()
+    SPLIT_chromosome.out.collect().view()
 }
 
 
