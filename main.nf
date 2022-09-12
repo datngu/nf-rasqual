@@ -81,7 +81,7 @@ workflow {
     /// ATAC QTL
     //atac_bam_ch.collect().view()
     BAM_rename(params.meta, atac_bam_ch.collect())
-    ADD_AS_vcf(INDEX_vcf.out, BAM_rename.out)
+    ADD_AS_vcf(params.genotype, BAM_rename.out)
     SPLIT_chromosome(chrom_list_ch, ADD_AS_vcf.out, params.atac_count )
     SPLIT_chromosome.collect().view()
 }
