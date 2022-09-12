@@ -18,7 +18,7 @@ git pull
 
 atac_bam=/mnt/users/ngda/ngs_data/atlantic_salmon/atac/brain/bam/*{.bam,.bai}
 atac_count=/mnt/users/ngda/ngs_data/atlantic_salmon/atac/brain/consensus_peaks.mLb.clN.featureCounts.txt
-genotype=/mnt/users/ngda/ngs_data/atlantic_salmon/wgs/sorted_all_chr_added_GP.vcf.gz
+genotype=/mnt/users/ngda/ngs_data/atlantic_salmon/wgs/processed_all_chrom.vcf.gz
 
 outdir=results
 
@@ -31,4 +31,4 @@ nextflow run main.nf -resume --atac_bam $atac_bam --atac_count $atac_count --gen
 singularity run /mnt/users/ngda/proj/paper1/nf-rasqual/work/singularity/ndatth-rasqual-v0.0.0.img
 
 RASQUALDIR=/rasqual
-/mnt/users/ngda/proj/paper1/nf-rasqual/bin/createASVCF_fixed_path.sh paired_end bam_list.txt sorted_all_chr_added_GP.vcf.gz out.vcf.gz atac
+/mnt/users/ngda/proj/paper1/nf-rasqual/bin/createASVCF_fixed_path.sh paired_end bam_list.txt processed_all_chrom.vcf.gz out.vcf.gz atac

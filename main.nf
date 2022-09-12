@@ -3,7 +3,7 @@
 ========================================================================================
                           nf-rasqual
 ========================================================================================
-                RASQUAL Analysis Pipeline.
+                RASQUAL Analysis Pipeline with nextflow.
                 https://github.com/datngu/nf-rasqual
                 Author: Dat T Nguyen
                 Contact: ndat<at>utexas.edu
@@ -78,10 +78,13 @@ workflow {
     chrom_list_ch = channel.from(params.chrom)
     peer_list_ch = channel.from(params.peer)
 
+    // spliting vcf and counting expression
+    INDEX_vcf(params.genotype)
+    SPLITING_chromosome(chrom_list_ch, INDEX_vcf.out, params.atac_count )
+
     /// ATAC QTL
     //atac_bam_ch.collect().view()
     BAM_rename(params.meta, atac_bam_ch.collect())
-    //BAM_rename.out.view()
     ADD_AS_vcf(params.genotype, BAM_rename.out)
 }
 
@@ -123,4 +126,89 @@ process ADD_AS_vcf {
     bcftools index -tf $in_vcf
     createASVCF_fixed_path.sh paired_end bam_list.txt $in_vcf genotype_added_AS.vcf.gz atac
     """
+}
+
+
+process ADD_AS_vcf {
+    container 'ndatth/rasqual:v0.0.0'
+    publishDir 'atac_AS_vcf'
+    memory '8 GB'
+
+    input:
+    path in_vcf
+    path bamfiles
+
+    output:
+    path "genotype_added_AS.vcf.gz"
+
+    script:
+    """
+    ls \$PWD/*bam > bam_list.txt
+    bcftools index -tf $in_vcf
+    createASVCF_fixed_path.sh paired_end bam_list.txt $in_vcf genotype_added_AS.vcf.gz atac
+    """
+}
+
+
+
+process INDEX_vcf {
+    container 'ndatth/rasqual:v0.0.0'
+    publishDir 'atac_AS_vcf'
+    memory '8 GB'
+
+    input:
+    path in_vcf
+
+    output:
+    tuple path("processed.vcf.gz"), path("processed.vcf.gz.tbi")
+
+    script:
+    """
+    zcat $in_vcf | sed 's/ssa0//g' | sed 's/ssa//g' | bgzip > processed.vcf.gz
+    bctools index -t processed.vcf.gz
+    """
+}
+
+
+
+process SPLITING_chromosome {
+    container 'ndatth/rasqual:v0.0.0'
+    publishDir 'split_chrom'
+    memory '8 GB'
+
+    input:
+    val chr
+    path in_vcf
+    path in_atac_exp
+
+    output:
+    tuple val("$chr"), path("${chr}.vcf.gz"), path("${chr}.vcf.gz.tbi"), path("${chr}.atac_count.txt")
+
+    script:
+    """
+    atac_exp_filter.py $in_atac_exp ${chr}.atac_count.txt $chr
+    bcftools view processed.vcf.gz --regions $chr -Oz -o ${chr}.vcf.gz
+    bcftools index -t ${chr}.vcf.gz
+    """
+
+}
+
+process PREPROCESSING_atac_qtl {
+    container 'ndatth/rasqual:v0.0.0'
+    publishDir 'atac_qtl'
+    memory '8 GB'
+
+    input:
+    path meta
+    path atac_exp
+    path genotype_vcf
+
+    output:
+    tuple path("${chr}.vcf.gz"), path("${chr}.vcf.gz.tbi"), path("${chr}.atac_count.txt")
+
+    script:
+    """
+    atac_rasqual_processor.R $meta $atac_exp $genotype_vcf
+    """
+
 }

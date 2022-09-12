@@ -53,3 +53,7 @@ fai=/mnt/users/ngda/genomes/atlantic_salmon/Salmo_salar.Ssal_v3.1.dna_sm.topleve
 
 bcftools reheader --fai $fai all_chr_added_GP.vcf.gz | bcftools sort -Oz > sorted_all_chr_added_GP.vcf.gz
 bftools index -t sorted_all_chr_added_GP.vcf.gz
+
+bftools index -t sorted_all_chr_added_GP.vcf.gz
+
+zcat sorted_all_chr_added_GP.vcf.gz | sed 's/ssa0//g' | sed 's/ssa//g' | bgzip > processed_all_chrom.vcf.gz

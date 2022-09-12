@@ -1,12 +1,40 @@
+#!/usr/bin/env Rscript
+
+options(stringsAsFactors=FALSE)
+syntax='\nUsage:\t./atac_rasqual_processor.R out_file libsize bsj_filter in_file_1 in_file_2 in_file_3 ...\n\n'
+
+args = commandArgs(trailingOnly = TRUE)
+
+if(length(args) < 4 ){
+  cat("\nInvalid arguments, Program stop! \n")
+  cat(syntax)
+  quit()
+}
 
 
 #setwd("/Users/datn/github/nf-rasqual/data")
+
+#############
+# input
+meta_fn = "meta/brain.csv"
+count_fn = "atac_count.tsv"
+geno_fn = "genotype.vcf.gz"
+#############
+# output:
+# atac.covs.bin - atac.covs.txt
+# atac.exp.bin - atac.exp.txt
+# atac.size_factors.bin - atac.size_factors.txt
+# snp_counts.tsv
+#############
+
+
 require(rasqualTools)
 require(data.table)
 
+set.seed(2022)
 
-# author Natsuhiko Kumasaka
 randomize <- function(x,g=NULL){
+  # author Natsuhiko Kumasaka
   if(is.null(g)){
     n=ncol(x);
     t(apply(x,1,function(xx){xx[order(runif(n))]}))
@@ -19,7 +47,7 @@ randomize <- function(x,g=NULL){
 }
 
 rasqualMakeCovariates <- function(counts, size_factors) {
-  
+  # author Natsuhiko Kumasaka
   #Map parameters to Natsuhiko's variables
   Y = counts
   K = size_factors
@@ -41,10 +69,6 @@ rasqualMakeCovariates <- function(counts, size_factors) {
   return(covs)
 }
 
-
-meta_fn = "meta/brain.csv"
-count_fn = "atac_count.tsv"
-geno_fn = "genotype.vcf.gz"
 
 meta = fread(meta_fn, sep = ",")
 meta = as.data.frame(meta)
@@ -89,11 +113,11 @@ peak_info$exon_ends = as.character(count$End)
 
 snp_info = genotype[,c(1:3)]
 colnames(snp_info) = c("chr", "pos", "snp_id")
-snp_info$chr = gsub("ssa0", "", snp_info$chr, fixed = TRUE)
-snp_info$chr = gsub("ssa", "", snp_info$chr, fixed = TRUE)
+#snp_info$chr = gsub("ssa0", "", snp_info$chr, fixed = TRUE)
+#snp_info$chr = gsub("ssa", "", snp_info$chr, fixed = TRUE)
 
 snp_counts = countSnpsOverlapingExons(peak_info, snp_info, cis_window = 5e5)
-
+fwrite(snp_counts, file = "snp_counts.tsv", sep = "\t")
 
 
 
