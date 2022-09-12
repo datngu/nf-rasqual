@@ -144,7 +144,7 @@ process INDEX_vcf {
     script:
     """
     zcat $in_vcf | sed 's/ssa0//g' | sed 's/ssa//g' | bgzip > processed.vcf.gz
-    bctools index -t processed.vcf.gz
+    bcftools index -t processed.vcf.gz
     """
 }
 
