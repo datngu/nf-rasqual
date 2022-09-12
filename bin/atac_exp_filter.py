@@ -11,6 +11,7 @@ chr = sys.argv[3]
 fi = open(exp_path,'rt')
 fo = open(out_path,'w')
 count = 0
+
 for l in fi:
     count = count + 1
     if(count < 2):
@@ -19,5 +20,6 @@ for l in fi:
         row = l.split()
         if(row[1] == chr):
             fo.writelines(l)
+
 fo.close()
 fi.close() 
