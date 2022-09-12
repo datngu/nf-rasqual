@@ -129,27 +129,6 @@ process ADD_AS_vcf {
 }
 
 
-process ADD_AS_vcf {
-    container 'ndatth/rasqual:v0.0.0'
-    publishDir 'atac_AS_vcf'
-    memory '8 GB'
-
-    input:
-    path in_vcf
-    path bamfiles
-
-    output:
-    path "genotype_added_AS.vcf.gz"
-
-    script:
-    """
-    ls \$PWD/*bam > bam_list.txt
-    bcftools index -tf $in_vcf
-    createASVCF_fixed_path.sh paired_end bam_list.txt $in_vcf genotype_added_AS.vcf.gz atac
-    """
-}
-
-
 
 process INDEX_vcf {
     container 'ndatth/rasqual:v0.0.0'
