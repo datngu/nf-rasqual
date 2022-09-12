@@ -85,7 +85,8 @@ workflow {
     SPLIT_chromosome(chrom_list_ch, ADD_AS_vcf.out, params.atac_count )
     //SPLIT_chromosome.out.collect().view()
     PREPROCESS_atac_qtl(chrom_list_ch, params.meta, SPLIT_chromosome.out.collect())
-    PREPROCESS_atac_qtl.out.collect().view()
+    //PREPROCESS_atac_qtl.out.collect().view()
+    RUN_atac_rasqual(chrom_list_ch, PREPROCESS_atac_qtl.out.collect(), SPLIT_chromosome.out.collect())
 }
 
 
@@ -196,18 +197,25 @@ process RUN_atac_rasqual {
     input:
     val chr
     path preproces_data
+    path split_chrom
 
     output:
-    tuple path("${chr}_atac.covs.bin"), path("${chr}_atac.covs.txt"), path("${chr}_atac.exp.bin"), path("${chr}_atac.exp.txt"), path("${chr}_atac.size_factors.bin"), path("${chr}_atac.size_factors.txt"), path("${chr}_snp_counts.tsv")
+    tuple path("${chr}_rasqual_results*")
 
 
     script:
     """
     awk '{ print \$1 }' ${chr}_atac.exp.txt > ${chr}_gene_id.txt
+    N=(wc -l < ${chr}_atac.exp.txt)
 
     run_rasqual.py --readCounts ${chr}_atac.exp.bin \
         --offsets ${chr}_atac.size_factors.bin \
         --covariates ${chr}_atac.exp.bin \
-        --n 12
+        --n \$N \
+        --vcf ${chr}.vcf.gz \
+        --outprefix ${chr}_rasqual_results \
+        --geneids ${chr}_gene_id.txt \
+        --geneMetadata ${chr}_snp_counts.tsv \
+        --execute True
     """
 }
