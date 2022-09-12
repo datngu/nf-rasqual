@@ -83,8 +83,9 @@ workflow {
     BAM_rename(params.meta, atac_bam_ch.collect())
     ADD_AS_vcf(params.genotype, BAM_rename.out)
     SPLIT_chromosome(chrom_list_ch, ADD_AS_vcf.out, params.atac_count )
-    SPLIT_chromosome.out.collect().view()
-    PREPROCESS_atac_qtl(chrom_list_ch, params.meta, SPLIT_chromosome.collect())
+    //SPLIT_chromosome.out.collect().view()
+    PREPROCESS_atac_qtl(chrom_list_ch, params.meta, SPLIT_chromosome.out.collect())
+    PREPROCESS_atac_qtl.out.collect().view()
 }
 
 
@@ -183,5 +184,59 @@ process PREPROCESS_atac_qtl {
     mv atac.size_factors.bin ${chr}_atac.size_factors.bin
     mv atac.size_factors.txt ${chr}_atac.size_factors.txt
     mv snp_counts.tsv ${chr}_snp_counts.tsv
+    """
+}
+
+
+process PREPROCESS_atac_qtl {
+    container 'ndatth/rasqual:v0.0.0'
+    publishDir 'atac_qtl_input'
+    memory '8 GB'
+
+    input:
+    val chr
+    path meta
+    path split_chrom
+
+    output:
+    tuple path("${chr}_atac.covs.bin"), path("${chr}_atac.covs.txt"), path("${chr}_atac.exp.bin"), path("${chr}_atac.exp.txt"), path("${chr}_atac.size_factors.bin"), path("${chr}_atac.size_factors.txt"), path("${chr}_snp_counts.tsv")
+
+
+    script:
+    """
+    atac_rasqual_processor.R ${meta} ${chr}.atac_count.txt ${chr}.vcf.gz
+    ## rename files
+    mv atac.covs.bin ${chr}_atac.covs.bin
+    mv atac.covs.txt ${chr}_atac.covs.txt
+    mv atac.exp.bin ${chr}_atac.exp.bin
+    mv atac.exp.txt ${chr}_atac.exp.txt
+    mv atac.size_factors.bin ${chr}_atac.size_factors.bin
+    mv atac.size_factors.txt ${chr}_atac.size_factors.txt
+    mv snp_counts.tsv ${chr}_snp_counts.tsv
+    """
+}
+
+
+process RUN_atac_rasqual {
+    container 'ndatth/rasqual:v0.0.0'
+    publishDir 'atac_qtl_input'
+    memory '8 GB'
+
+    input:
+    val chr
+    path preproces_data
+
+    output:
+    tuple path("${chr}_atac.covs.bin"), path("${chr}_atac.covs.txt"), path("${chr}_atac.exp.bin"), path("${chr}_atac.exp.txt"), path("${chr}_atac.size_factors.bin"), path("${chr}_atac.size_factors.txt"), path("${chr}_snp_counts.tsv")
+
+
+    script:
+    """
+    awk '{ print $1 }' ${chr}_atac.exp.txt > ${chr}_gene_id.txt
+
+    run_rasqual.py --readCounts ${chr}_atac.exp.bin \
+        --offsets ${chr}_atac.size_factors.bin \
+        --covariates ${chr}_atac.exp.bin \
+        --n 
     """
 }
