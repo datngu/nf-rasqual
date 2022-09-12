@@ -165,7 +165,7 @@ process SPLITING_chromosome {
 
     script:
     """
-    atac_exp_filter.py $in_atac_exp ${chr}.atac_count.txt $chr
+    atac_exp_filter.sh $in_atac_exp ${chr}.atac_count.txt $chr
     bcftools view processed.vcf.gz --regions $chr -Oz -o ${chr}.vcf.gz
     bcftools index -t ${chr}.vcf.gz
     """
