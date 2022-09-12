@@ -78,14 +78,12 @@ workflow {
     chrom_list_ch = channel.from(params.chrom)
     peer_list_ch = channel.from(params.peer)
 
-    // spliting vcf and counting expression
-    INDEX_vcf(params.genotype)
-    SPLITING_chromosome(chrom_list_ch, INDEX_vcf.out, params.atac_count )
-
     /// ATAC QTL
     //atac_bam_ch.collect().view()
     BAM_rename(params.meta, atac_bam_ch.collect())
-    ADD_AS_vcf(params.genotype, BAM_rename.out)
+    ADD_AS_vcf(INDEX_vcf.out, BAM_rename.out)
+    SPLIT_chromosome(chrom_list_ch, ADD_AS_vcf.out, params.atac_count )
+    SPLIT_chromosome.collect().view()
 }
 
 
@@ -118,39 +116,24 @@ process ADD_AS_vcf {
     path bamfiles
 
     output:
-    path "genotype_added_AS.vcf.gz"
-
-    script:
-    """
-    ls \$PWD/*bam > bam_list.txt
-    bcftools index -tf $in_vcf
-    createASVCF_fixed_path.sh paired_end bam_list.txt $in_vcf genotype_added_AS.vcf.gz atac
-    """
-}
-
-
-
-process INDEX_vcf {
-    container 'ndatth/rasqual:v0.0.0'
-    publishDir 'atac_AS_vcf'
-    memory '8 GB'
-
-    input:
-    path in_vcf
-
-    output:
     tuple path("processed.vcf.gz"), path("processed.vcf.gz.tbi")
 
     script:
     """
-    zcat $in_vcf | sed 's/ssa0//g' | sed 's/ssa//g' | bgzip > processed.vcf.gz
+    ls \$PWD/*bam > bam_list.txt
+    zcat $in_vcf | sed 's/ssa0//g' | sed 's/ssa//g' | bgzip > tem.vcf.gz
+    bcftools index -t tem.vcf.gz
+    createASVCF_fixed_path.sh paired_end bam_list.txt tem.vcf.gz processed.vcf.gz atac
     bcftools index -t processed.vcf.gz
+    rm tem.vcf.gz tem.vcf.gz.tbi
     """
 }
 
 
 
-process SPLITING_chromosome {
+
+
+process SPLIT_chromosome {
     container 'ndatth/rasqual:v0.0.0'
     publishDir 'split_chrom'
     memory '8 GB'
@@ -161,7 +144,7 @@ process SPLITING_chromosome {
     path in_atac_exp
 
     output:
-    tuple val("${chr}"), path("${chr}.vcf.gz"), path("${chr}.vcf.gz.tbi"), path("${chr}.atac_count.txt")
+    tuple path("${chr}.vcf.gz"), path("${chr}.vcf.gz.tbi"), path("${chr}.atac_count.txt")
 
     script:
     """
@@ -172,17 +155,18 @@ process SPLITING_chromosome {
 
 }
 
-process PREPROCESSING_atac_qtl {
+process PREPROCESS_atac_qtl {
     container 'ndatth/rasqual:v0.0.0'
     publishDir 'atac_qtl_input'
     memory '8 GB'
 
     input:
+    val chr
     path meta
-    path splited_chrom
+    path split_chrom
 
     output:
-    tuple val("${chr}"), path("${chr}_atac.covs.bin"), path("${chr}_atac.covs.txt"), path("${chr}_atac.exp.bin"), path("${chr}_atac.exp.txt"), path("${chr}_atac.size_factors.bin"), path("${chr}_atac.size_factors.txt"), path("${chr}_snp_counts.tsv")
+    tuple path("${chr}_atac.covs.bin"), path("${chr}_atac.covs.txt"), path("${chr}_atac.exp.bin"), path("${chr}_atac.exp.txt"), path("${chr}_atac.size_factors.bin"), path("${chr}_atac.size_factors.txt"), path("${chr}_snp_counts.tsv")
 
 
     script:
