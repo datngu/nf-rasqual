@@ -12,7 +12,7 @@ syntax='\nUsage:\t./atac_rasqual_processor.R meta_csv feature_count_txt genotype
 
 args = commandArgs(trailingOnly = TRUE)
 
-if(length(args) < 4 ){
+if(length(args) < 3 ){
   cat("\nInvalid arguments, Program stop! \n")
   cat(syntax)
   quit()
