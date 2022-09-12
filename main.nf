@@ -206,7 +206,7 @@ process RUN_atac_rasqual {
     script:
     """
     awk '{ print \$1 }' ${chr}_atac.exp.txt > ${chr}_gene_id.txt
-    N=(cat ${chr}_atac.exp.txt | wc -l)
+    N=$(cat ${chr}_atac.exp.txt | wc -l)
 
     run_rasqual.py --readCounts ${chr}_atac.exp.bin \
         --offsets ${chr}_atac.size_factors.bin \
