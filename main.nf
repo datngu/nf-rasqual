@@ -27,7 +27,7 @@ params.meta            = "$baseDir/data/meta/brain.csv"
 params.outdir          = "results"
 
 // running options
-params.chrom           = 1..22 
+params.chrom           = 1..29 
 params.peer            = 1..20 
 params.genotype_PCs    = 3 
 params.exp_prop        = 0.5
