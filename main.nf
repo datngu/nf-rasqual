@@ -232,7 +232,7 @@ process RUN_atac_rasqual {
 
     script:
     """
-    awk '{ print $\1 }' ${chr}_atac.exp.txt > ${chr}_gene_id.txt
+    awk '{ print \$1 }' ${chr}_atac.exp.txt > ${chr}_gene_id.txt
 
     run_rasqual.py --readCounts ${chr}_atac.exp.bin \
         --offsets ${chr}_atac.size_factors.bin \
