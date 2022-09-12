@@ -182,7 +182,7 @@ process SPLITING_chromosome {
     path in_atac_exp
 
     output:
-    tuple val("$chr"), path("${chr}.vcf.gz"), path("${chr}.vcf.gz.tbi"), path("${chr}.atac_count.txt")
+    tuple val("${chr}"), path("${chr}.vcf.gz"), path("${chr}.vcf.gz.tbi"), path("${chr}.atac_count.txt")
 
     script:
     """
@@ -195,20 +195,27 @@ process SPLITING_chromosome {
 
 process PREPROCESSING_atac_qtl {
     container 'ndatth/rasqual:v0.0.0'
-    publishDir 'atac_qtl'
+    publishDir 'atac_qtl_input'
     memory '8 GB'
 
     input:
     path meta
-    path atac_exp
-    path genotype_vcf
+    path splited_chrom
 
     output:
-    tuple path("${chr}.vcf.gz"), path("${chr}.vcf.gz.tbi"), path("${chr}.atac_count.txt")
+    tuple val("${chr}"), path("${chr}_atac.covs.bin"), path("${chr}_atac.covs.txt"), path("${chr}_atac.exp.bin"), path("${chr}_atac.exp.txt"), path("${chr}_atac.size_factors.bin"), path("${chr}_atac.size_factors.txt"), path("${chr}_snp_counts.tsv")
+
 
     script:
     """
-    atac_rasqual_processor.R $meta $atac_exp $genotype_vcf
+    atac_rasqual_processor.R ${meta} ${chr}.atac_count.txt ${chr}.vcf.gz
+    ## rename files
+    mv atac.covs.bin ${chr}_atac.covs.bin
+    mv atac.covs.txt ${chr}_atac.covs.txt
+    mv atac.exp.bin ${chr}_atac.exp.bin
+    mv atac.exp.txt ${chr}_atac.exp.txt
+    mv atac.size_factors.bin ${chr}_atac.size_factors.bin
+    mv atac.size_factors.txt ${chr}_atac.size_factors.txt
+    mv snp_counts.tsv ${chr}_snp_counts.tsv
     """
-
 }
