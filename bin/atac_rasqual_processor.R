@@ -94,6 +94,7 @@ geno_id = colnames(genotype)[-c(1:9)]
 meta = meta[meta$genotype_id %in% geno_id,]
 od = match(geno_id, meta$genotype_id)
 meta = meta[od,]
+rownames(meta) = meta$genotype_id
 
 atac_peaks = paste(count$Geneid, count$Chr, count$Start, count$End, count$Strand, count$Length, sep = ":")
 count2 = count[,-c(1:6)]

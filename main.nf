@@ -84,6 +84,7 @@ workflow {
     ADD_AS_vcf(params.genotype, BAM_rename.out)
     SPLIT_chromosome(chrom_list_ch, ADD_AS_vcf.out, params.atac_count )
     SPLIT_chromosome.out.collect().view()
+    PREPROCESS_atac_qtl(chrom_list_ch, params.meta, SPLIT_chromosome.collect())
 }
 
 
@@ -154,6 +155,8 @@ process SPLIT_chromosome {
     """
 
 }
+
+
 
 process PREPROCESS_atac_qtl {
     container 'ndatth/rasqual:v0.0.0'

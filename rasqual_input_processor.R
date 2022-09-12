@@ -1,18 +1,7 @@
 #!/usr/bin/env Rscript
 
-options(stringsAsFactors=FALSE)
-syntax='\nUsage:\t./atac_rasqual_processor.R out_file libsize bsj_filter in_file_1 in_file_2 in_file_3 ...\n\n'
 
-args = commandArgs(trailingOnly = TRUE)
-
-if(length(args) < 4 ){
-  cat("\nInvalid arguments, Program stop! \n")
-  cat(syntax)
-  quit()
-}
-
-
-#setwd("/Users/datn/github/nf-rasqual/data")
+setwd("/Users/datn/github/nf-rasqual/data")
 
 #############
 # input
@@ -83,6 +72,7 @@ geno_id = colnames(genotype)[-c(1:9)]
 meta = meta[meta$genotype_id %in% geno_id,]
 od = match(geno_id, meta$genotype_id)
 meta = meta[od,]
+rownames(meta) = meta$genotype_id
 
 atac_peaks = paste(count$Geneid, count$Chr, count$Start, count$End, count$Strand, count$Length, sep = ":")
 count2 = count[,-c(1:6)]
