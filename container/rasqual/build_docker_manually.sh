@@ -94,6 +94,13 @@ R -e 'devtools::install_github("kauralasoo/rasqual/rasqualTools")'
 # install data.table
 R -e "install.packages('R.utils', repos='http://cran.us.r-project.org')"
 R -e "install.packages('data.table', repos='http://cran.us.r-project.org')"
+# install do.parallel
+R -e "install.packages('doParallel', repos='http://cran.us.r-project.org')"
+R -e "install.packages('foreach', repos='http://cran.us.r-project.org')"
+
+# install pandas
+apt-get -y install python3-pip
+pip3 install pandas
 
 
 
