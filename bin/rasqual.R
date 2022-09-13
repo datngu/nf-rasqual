@@ -19,6 +19,8 @@ Input parameters are:
 IMPORTANT NOTE: ordering in meta.txt should be the same with feature_count.bin
 "
 
+args = commandArgs(trailingOnly = TRUE)
+
 options(stringsAsFactors = FALSE)
 require(data.table)
 require(foreach)
