@@ -22,7 +22,7 @@ if(length(args) < 4 ){
 meta_fn = args[1]
 count_fn = args[2]
 geno_fn = args[3]
-window = args[4]
+window = as.integer(args[4])
 
 
 #setwd("/Users/datn/github/nf-rasqual/data")
