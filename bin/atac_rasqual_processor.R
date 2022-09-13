@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 
 options(stringsAsFactors=FALSE)
-syntax='\nUsage:\t./atac_rasqual_processor.R meta_csv feature_count_txt genotype_vcf'
+syntax='\nUsage:\t./atac_rasqual_processor.R meta_csv feature_count_txt genotype_vcf window'
 
 # defaut outputs:
 # atac.covs.bin - atac.covs.txt
@@ -10,9 +10,10 @@ syntax='\nUsage:\t./atac_rasqual_processor.R meta_csv feature_count_txt genotype
 # snp_counts.tsv
 
 
+
 args = commandArgs(trailingOnly = TRUE)
 
-if(length(args) < 3 ){
+if(length(args) < 4 ){
   cat("\nInvalid arguments, Program stop! \n")
   cat(syntax)
   quit()
@@ -21,6 +22,7 @@ if(length(args) < 3 ){
 meta_fn = args[1]
 count_fn = args[2]
 geno_fn = args[3]
+window = args[4]
 
 
 #setwd("/Users/datn/github/nf-rasqual/data")
@@ -128,7 +130,7 @@ colnames(snp_info) = c("chr", "pos", "snp_id")
 #snp_info$chr = gsub("ssa0", "", snp_info$chr, fixed = TRUE)
 #snp_info$chr = gsub("ssa", "", snp_info$chr, fixed = TRUE)
 
-snp_counts = countSnpsOverlapingExons(peak_info, snp_info, cis_window = 5e5)
+snp_counts = countSnpsOverlapingExons(peak_info, snp_info, cis_window = window)
 fwrite(snp_counts, file = "snp_counts.tsv", sep = "\t")
 
 

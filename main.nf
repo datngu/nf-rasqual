@@ -33,8 +33,8 @@ params.genotype_PCs    = 3
 params.exp_prop        = 0.5
 params.maf             = 0.05
 params.fdr             = 0.1
-params.atac_window     = 50000
-params.eqtl_window     = 1000000
+params.atac_window     = 10000
+params.eqtl_window     = 500000
 
 // pipeline options
 params.atac_qtl          = true
@@ -84,7 +84,7 @@ workflow {
     ADD_AS_vcf(params.genotype, BAM_rename.out)
     SPLIT_chromosome(chrom_list_ch, ADD_AS_vcf.out, params.atac_count )
     //SPLIT_chromosome.out.collect().view()
-    PREPROCESS_atac_qtl(chrom_list_ch, params.meta, SPLIT_chromosome.out.collect())
+    PREPROCESS_atac_qtl(chrom_list_ch, params.meta, SPLIT_chromosome.out.collect(), params.atac_window)
     //PREPROCESS_atac_qtl.out.collect().view()
     RUN_atac_rasqual(chrom_list_ch, PREPROCESS_atac_qtl.out.collect(), SPLIT_chromosome.out.collect())
 }
@@ -169,6 +169,7 @@ process PREPROCESS_atac_qtl {
     val chr
     path meta
     path split_chrom
+    val window
 
     output:
     tuple path("${chr}_atac.covs.bin"), path("${chr}_atac.covs.txt"), path("${chr}_atac.exp.bin"), path("${chr}_atac.exp.txt"), path("${chr}_atac.size_factors.bin"), path("${chr}_atac.size_factors.txt"), path("${chr}_snp_counts.tsv")
@@ -176,7 +177,7 @@ process PREPROCESS_atac_qtl {
 
     script:
     """
-    atac_rasqual_processor.R ${meta} ${chr}.atac_count.txt ${chr}.vcf.gz
+    atac_rasqual_processor.R ${meta} ${chr}.atac_count.txt ${chr}.vcf.gz $window
     ## rename files
     mv atac.covs.bin ${chr}_atac.covs.bin
     mv atac.covs.txt ${chr}_atac.covs.txt
@@ -192,7 +193,8 @@ process PREPROCESS_atac_qtl {
 process RUN_atac_rasqual {
     container 'ndatth/rasqual:v0.0.0'
     publishDir 'results_rasqual'
-    memory '8 GB'
+    memory '64 GB'
+    cpus 16
 
     input:
     val chr
@@ -200,22 +202,11 @@ process RUN_atac_rasqual {
     path split_chrom
 
     output:
-    path("${chr}_rasqual_results*")
+    path("${chr}_rasqual_lead_snp.txt")
 
 
     script:
     """
-    awk '{ print \$1 }' ${chr}_atac.exp.txt > ${chr}_gene_id.txt
-    N=\$(cat ${chr}_atac.exp.txt | wc -l)
-
-    run_rasqual.py --readCounts ${chr}_atac.exp.bin \
-        --offsets ${chr}_atac.size_factors.bin \
-        --covariates ${chr}_atac.exp.bin \
-        --n \$N \
-        --vcf ${chr}.vcf.gz \
-        --outprefix ${chr}_rasqual_results \
-        --geneids ${chr}_gene_id.txt \
-        --geneMetadata ${chr}_snp_counts.tsv \
-        --execute True
+    rasqual.R vcf=${chr}.vcf.gz y=${chr}_atac.exp.bin k=${chr}_atac.size_factors.bin x=${chr}_atac.covs.bin x_txt=${chr}_atac.covs.txt meta=${chr}_snp_counts.tsv out=${chr}_rasqual_lead_snp.txt cpu=${task.cpus}
     """
 }
