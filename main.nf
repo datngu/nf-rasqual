@@ -29,7 +29,7 @@ params.outdir          = "results"
 // running options
 params.chrom           = 1..29 
 params.peer            = 1..20
-params.permute         = 1..20 
+params.permute         = 20
 params.genotype_PCs    = 3 
 params.exp_prop        = 0.5
 params.maf             = 0.05
@@ -230,11 +230,11 @@ process RUN_atac_rasqual_permutation {
     path split_chrom
 
     output:
-    path("${chr}_permute_${permute}_rasqual_lead_snp.txt")
+    path("${chr}_permute_*_rasqual_lead_snp.txt")
 
 
     script:
     """
-    rasqual_permute.R vcf=${chr}.vcf.gz y=${chr}_atac.exp.bin k=${chr}_atac.size_factors.bin x=${chr}_atac.covs.bin x_txt=${chr}_atac.covs.txt meta=${chr}_snp_counts.tsv out=${chr}_permute_${permute}_rasqual_lead_snp.txt cpu=${task.cpus}
+    rasqual_permute.sh ${chr}.vcf.gz ${chr}_atac.exp.bin ${chr}_atac.size_factors.bin ${chr}_atac.covs.bin ${chr}_atac.covs.txt ${chr}_snp_counts.tsv cpu=${task.cpus} ${permute}
     """
 }
