@@ -28,7 +28,8 @@ params.outdir          = "results"
 
 // running options
 params.chrom           = 1..29 
-params.peer            = 1..20 
+params.peer            = 1..20
+params.permute         = 1..20 
 params.genotype_PCs    = 3 
 params.exp_prop        = 0.5
 params.maf             = 0.05
@@ -58,6 +59,7 @@ log.info """\
     outdir              : $params.outdir
     chrom               : $params.chrom
     peer                : $params.peer
+    permute             : $params.permute
     maf                 : $params.maf
     fdr                 : $params.fdr
     eqtl_window         : $params.eqtl_window
@@ -77,6 +79,7 @@ workflow {
     atac_bam_ch = channel.fromPath( params.atac_bam, checkIfExists: true )
     chrom_list_ch = channel.from(params.chrom)
     peer_list_ch = channel.from(params.peer)
+    permute_ch = channel.from(params.permute)
 
     /// ATAC QTL
     //atac_bam_ch.collect().view()
@@ -87,6 +90,7 @@ workflow {
     PREPROCESS_atac_qtl(chrom_list_ch, params.meta, SPLIT_chromosome.out.collect(), params.atac_window)
     //PREPROCESS_atac_qtl.out.collect().view()
     RUN_atac_rasqual(chrom_list_ch, PREPROCESS_atac_qtl.out.collect(), SPLIT_chromosome.out.collect())
+    RUN_atac_rasqual_permutation(permute_ch, chrom_list_ch, PREPROCESS_atac_qtl.out.collect(), SPLIT_chromosome.out.collect())
 }
 
 
@@ -208,5 +212,29 @@ process RUN_atac_rasqual {
     script:
     """
     rasqual.R vcf=${chr}.vcf.gz y=${chr}_atac.exp.bin k=${chr}_atac.size_factors.bin x=${chr}_atac.covs.bin x_txt=${chr}_atac.covs.txt meta=${chr}_snp_counts.tsv out=${chr}_rasqual_lead_snp.txt cpu=${task.cpus}
+    """
+}
+
+
+
+process RUN_atac_rasqual_permutation {
+    container 'ndatth/rasqual:v0.0.0'
+    publishDir 'results_rasqual'
+    memory '64 GB'
+    cpus 16
+
+    input:
+    val permute
+    val chr
+    path preproces_data
+    path split_chrom
+
+    output:
+    path("${chr}_permute_${permute}_rasqual_lead_snp.txt")
+
+
+    script:
+    """
+    rasqual_permute.R vcf=${chr}.vcf.gz y=${chr}_atac.exp.bin k=${chr}_atac.size_factors.bin x=${chr}_atac.covs.bin x_txt=${chr}_atac.covs.txt meta=${chr}_snp_counts.tsv out=${chr}_permute_${permute}_rasqual_lead_snp.txt cpu=${task.cpus}
     """
 }
