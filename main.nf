@@ -29,7 +29,7 @@ params.outdir          = "results"
 // running options
 params.chrom           = 1..29 
 params.peer            = 1..20
-params.permute         = 20
+params.permute         = 30
 params.genotype_PCs    = 3 
 params.exp_prop        = 0.5
 params.maf             = 0.05
@@ -79,8 +79,6 @@ workflow {
     atac_bam_ch = channel.fromPath( params.atac_bam, checkIfExists: true )
     chrom_list_ch = channel.from(params.chrom)
     peer_list_ch = channel.from(params.peer)
-    permute_ch = channel.from(params.permute)
-
     /// ATAC QTL
     //atac_bam_ch.collect().view()
     BAM_rename(params.meta, atac_bam_ch.collect())
@@ -90,7 +88,7 @@ workflow {
     PREPROCESS_atac_qtl(chrom_list_ch, params.meta, SPLIT_chromosome.out.collect(), params.atac_window)
     //PREPROCESS_atac_qtl.out.collect().view()
     RUN_atac_rasqual(chrom_list_ch, PREPROCESS_atac_qtl.out.collect(), SPLIT_chromosome.out.collect())
-    RUN_atac_rasqual_permutation(permute_ch, chrom_list_ch, PREPROCESS_atac_qtl.out.collect(), SPLIT_chromosome.out.collect())
+    RUN_atac_rasqual_permutation(params.permute, chrom_list_ch, PREPROCESS_atac_qtl.out.collect(), SPLIT_chromosome.out.collect())
 }
 
 
@@ -219,7 +217,7 @@ process RUN_atac_rasqual {
 
 process RUN_atac_rasqual_permutation {
     container 'ndatth/rasqual:v0.0.0'
-    publishDir 'results_rasqual'
+    publishDir 'results_rasqual_permutaion'
     memory '64 GB'
     cpus 16
 
