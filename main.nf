@@ -233,6 +233,6 @@ process RUN_atac_rasqual_permutation {
 
     script:
     """
-    rasqual_permute.sh ${chr}.vcf.gz ${chr}_atac.exp.bin ${chr}_atac.size_factors.bin ${chr}_atac.covs.bin ${chr}_atac.covs.txt ${chr}_snp_counts.tsv ${task.cpus} ${permute}
+    rasqual_permute.sh ${chr}.vcf.gz ${chr}_atac.exp.bin ${chr}_atac.size_factors.bin ${chr}_atac.covs.bin ${chr}_atac.covs.txt ${chr}_snp_counts.tsv ${task.cpus} ${permute} ${chr}
     """
 }
