@@ -91,13 +91,14 @@ workflow {
     RUN_atac_rasqual_permutation(params.permute, chrom_list_ch, PREPROCESS_atac_qtl.out.collect(), SPLIT_chromosome.out.collect())
 
     //chrom_list_ch.max().view()
-    MERGE_atac_rasqual(chrom_list_ch.max(), RUN_atac_rasqual.out.collect() )
+    MERGE_atac_rasqual(chrom_list_ch.max(), RUN_atac_rasqual.out.collect())
+    MERGE_atac_rasqual_permutation(params.permute, chrom_list_ch.max(), RUN_atac_rasqual_permutation.out.collect())
 }
 
 
 process BAM_rename {
     container 'ndatth/rasqual:v0.0.0'
-    publishDir 'bam_dir'
+    publishDir 'bam_dir', mode: 'symlink', overwrite: true
     memory '8 GB'
 
     input:
@@ -116,7 +117,7 @@ process BAM_rename {
 
 process ADD_AS_vcf {
     container 'ndatth/rasqual:v0.0.0'
-    publishDir 'atac_AS_vcf'
+    publishDir 'atac_AS_vcf', mode: 'symlink', overwrite: true
     memory '8 GB'
 
     input:
@@ -143,7 +144,7 @@ process ADD_AS_vcf {
 
 process SPLIT_chromosome {
     container 'ndatth/rasqual:v0.0.0'
-    publishDir 'split_chrom'
+    publishDir 'split_chrom', mode: 'symlink', overwrite: true
     memory '8 GB'
 
     input:
@@ -167,7 +168,7 @@ process SPLIT_chromosome {
 
 process PREPROCESS_atac_qtl {
     container 'ndatth/rasqual:v0.0.0'
-    publishDir 'atac_qtl_input'
+    publishDir 'atac_qtl_input', mode: 'symlink', overwrite: true
     memory '8 GB'
 
     input:
@@ -197,7 +198,7 @@ process PREPROCESS_atac_qtl {
 
 process RUN_atac_rasqual {
     container 'ndatth/rasqual:v0.0.0'
-    publishDir 'results_rasqual'
+    publishDir 'results_rasqual', mode: 'symlink', overwrite: true
     memory '64 GB'
     cpus 16
 
@@ -219,7 +220,7 @@ process RUN_atac_rasqual {
 
 process MERGE_atac_rasqual {
     container 'ndatth/rasqual:v0.0.0'
-    publishDir 'results_rasqual'
+    publishDir 'results_rasqual', mode: 'symlink', overwrite: true
     memory '8 GB'
     cpus 1
 
@@ -243,7 +244,7 @@ process MERGE_atac_rasqual {
 
 process RUN_atac_rasqual_permutation {
     container 'ndatth/rasqual:v0.0.0'
-    publishDir 'results_rasqual_permutaion'
+    publishDir 'results_rasqual_permutaion', mode: 'symlink', overwrite: true
     memory '64 GB'
     cpus 16
 
@@ -262,3 +263,31 @@ process RUN_atac_rasqual_permutation {
     rasqual_permute.sh ${chr}.vcf.gz ${chr}_atac.exp.bin ${chr}_atac.size_factors.bin ${chr}_atac.covs.bin ${chr}_atac.covs.txt ${chr}_snp_counts.tsv ${task.cpus} ${permute} ${chr}
     """
 }
+
+
+process MERGE_atac_rasqual_permutation {
+    container 'ndatth/rasqual:v0.0.0'
+    publishDir 'results_rasqual_permutaion', mode: 'symlink', overwrite: true
+    memory '8 GB'
+    cpus 1
+
+    input:
+    val permute
+    val max_chr
+    path atac_rasqual_results
+
+    output:
+    path("permute_*_all_chromosome_rasqual_lead_snp.txt")
+
+
+    script:
+    """
+    for i in \$(seq 1 $permute)
+        for chr in \$(seq 1 $max_chr)
+        do
+            cat \${chr}_permute_\${i}_rasqual_lead_snp.txt >> permute_\${i}_all_chromosome_rasqual_lead_snp.txt
+        done
+    done
+    """
+}
+
