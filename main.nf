@@ -283,6 +283,7 @@ process MERGE_atac_rasqual_permutation {
     script:
     """
     for i in \$(seq 1 $permute)
+    do
         for chr in \$(seq 1 $max_chr)
         do
             cat \${chr}_permute_\${i}_rasqual_lead_snp.txt >> permute_\${i}_all_chromosome_rasqual_lead_snp.txt
