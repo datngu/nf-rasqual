@@ -91,7 +91,7 @@ workflow {
     RUN_atac_rasqual_permutation(params.permute, chrom_list_ch, PREPROCESS_atac_qtl.out.collect(), SPLIT_chromosome.out.collect())
 
     //chrom_list_ch.max().view()
-    MERGE_atac_rasqual(chrom_list_ch.max(), RUN_atac_rasqual.out )
+    MERGE_atac_rasqual(chrom_list_ch.max(), RUN_atac_rasqual.out.collect() )
 }
 
 
