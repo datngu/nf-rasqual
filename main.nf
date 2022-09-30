@@ -88,6 +88,8 @@ workflow {
     PREPROCESS_atac_qtl(chrom_list_ch, params.meta, SPLIT_chromosome.out.collect(), params.atac_window)
     //PREPROCESS_atac_qtl.out.collect().view()
     RUN_atac_rasqual(chrom_list_ch, PREPROCESS_atac_qtl.out.collect(), SPLIT_chromosome.out.collect())
+    chrom_list_ch.max().view()
+    //MERGE_atac_rasqual(chrom_list_ch.max(), RUN_atac_rasqual.out )
     RUN_atac_rasqual_permutation(params.permute, chrom_list_ch, PREPROCESS_atac_qtl.out.collect(), SPLIT_chromosome.out.collect())
 }
 
@@ -213,6 +215,29 @@ process RUN_atac_rasqual {
     """
 }
 
+
+process MERGE_atac_rasqual {
+    container 'ndatth/rasqual:v0.0.0'
+    publishDir 'results_rasqual'
+    memory '8 GB'
+    cpus 1
+
+    input:
+    val max_chr
+    path atac_rasqual_results
+
+    output:
+    path("all_chromosome_rasqual_lead_snp.txt")
+
+
+    script:
+    """
+    for chr in \$(seq 1 $max_chr)
+    do
+        cat \${chr}_rasqual_lead_snp.txt >> all_chromosome_rasqual_lead_snp.txt
+    done
+    """
+}
 
 
 process RUN_atac_rasqual_permutation {
