@@ -88,9 +88,10 @@ workflow {
     PREPROCESS_atac_qtl(chrom_list_ch, params.meta, SPLIT_chromosome.out.collect(), params.atac_window)
     //PREPROCESS_atac_qtl.out.collect().view()
     RUN_atac_rasqual(chrom_list_ch, PREPROCESS_atac_qtl.out.collect(), SPLIT_chromosome.out.collect())
-    chrom_list_ch.max().view()
-    //MERGE_atac_rasqual(chrom_list_ch.max(), RUN_atac_rasqual.out )
     RUN_atac_rasqual_permutation(params.permute, chrom_list_ch, PREPROCESS_atac_qtl.out.collect(), SPLIT_chromosome.out.collect())
+
+    //chrom_list_ch.max().view()
+    MERGE_atac_rasqual(chrom_list_ch.max(), RUN_atac_rasqual.out )
 }
 
 
