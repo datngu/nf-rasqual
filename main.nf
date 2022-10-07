@@ -91,10 +91,11 @@ workflow {
     }
 
     if( params.eqtl_qtl ){
-        //atac_bam_ch = channel.fromPath( params.atac_bam, checkIfExists: true )
-        //ATAC_BAM_rename(params.meta, atac_bam_ch.collect())
-        //ATAC_ADD_AS_vcf(params.genotype, ATAC_BAM_rename.out)
-        //ATAC_SPLIT_chromosome(chrom_list_ch, ATAC_ADD_AS_vcf.out, params.atac_count )
+        rna_bam_ch = channel.fromPath( params.rna_bam, checkIfExists: true )
+        ATAC_BAM_rename(params.meta, rna_bam_ch.collect())
+        RNA_ADD_AS_vcf(params.genotype, RNA_BAM_rename.out)
+        RNA_SPLIT_chromosome(chrom_list_ch, RNA_ADD_AS_vcf.out, params.atac_count )
+
         //ATAC_PREPROCESS_atac_qtl(chrom_list_ch, params.meta, ATAC_SPLIT_chromosome.out.collect(), params.atac_window, params.phenotype_PCs)
         //RUN_atac_rasqual(chrom_list_ch, PREPROCESS_atac_qtl.out.collect(), SPLIT_chromosome.out.collect())
         //RUN_atac_rasqual_permutation(params.permute, chrom_list_ch, PREPROCESS_atac_qtl.out.collect(), SPLIT_chromosome.out.collect())
