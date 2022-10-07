@@ -87,7 +87,7 @@ workflow {
         ATAC_RUN_rasqual(chrom_list_ch, ATAC_PREPROCESS_rasqual.out.collect(), ATAC_SPLIT_chromosome.out.collect())
         ATAC_RUN_rasqual_permutation(params.permute, chrom_list_ch, ATAC_PREPROCESS_rasqual.out.collect(), ATAC_SPLIT_chromosome.out.collect())
         //chrom_list_ch.max().view()
-        
+
         ATAC_MERGE_rasqual(chrom_list_ch.max(), ATAC_RUN_rasqual.out.collect())
         ATAC_MERGE_rasqual_permutation(params.permute, chrom_list_ch.max(), ATAC_RUN_rasqual_permutation.out.collect())
     }
@@ -334,7 +334,7 @@ process ATAC_MERGE_rasqual {
 }
 
 
-process {
+process ATAC_MERGE_rasqual {
     container 'ndatth/rasqual:v0.0.0'
     publishDir 'ATAC_results_rasqual_permutaion', mode: 'symlink', overwrite: true
     memory '64 GB'
