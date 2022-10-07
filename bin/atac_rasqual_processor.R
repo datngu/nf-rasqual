@@ -95,9 +95,6 @@ PCA_Covariates <- function(counts, size_factors, n_PCs = 2) {
   # fpm calculation
   fpkm=t(t(Y/K+1)/apply(Y/K,2,sum))*1e6 #  /len*1e9
   
-  # Singular value decomposition
-  fpkm.svd   = svd((log(fpkm)-apply(log(fpkm),1,mean))/apply(log(fpkm),1,sd))
-  fpkm.svd.r = svd(randomize((log(fpkm)-apply(log(fpkm),1,mean))/apply(log(fpkm),1,sd)))
   ## author Dat T Nguyen
   p = prcomp(fpkm)
   pca = p$rotation[,1:n_PCs]
