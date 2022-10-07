@@ -40,7 +40,7 @@ params.eqtl_window     = 500000
 
 // pipeline options
 params.atac_qtl          = true
-params.eqtl_qtl          = false
+params.eqtl_qtl          = true
 
 
 log.info """\
