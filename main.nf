@@ -334,7 +334,7 @@ process ATAC_MERGE_rasqual {
 }
 
 
-process ATAC_MERGE_rasqual {
+process ATAC_RUN_rasqual_permutation {
     container 'ndatth/rasqual:v0.0.0'
     publishDir 'ATAC_results_rasqual_permutaion', mode: 'symlink', overwrite: true
     memory '64 GB'
