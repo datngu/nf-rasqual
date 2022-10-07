@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 
 options(stringsAsFactors=FALSE)
-syntax='\nUsage:\t./atac_rasqual_processor.R meta_csv feature_count_txt genotype_vcf window'
+syntax='\nUsage:\t./atac_rasqual_processor.R meta_csv feature_count_txt genotype_vcf window phenotype_PCs'
 
 # defaut outputs:
 # atac.covs.bin - atac.covs.txt
@@ -23,6 +23,7 @@ meta_fn = args[1]
 count_fn = args[2]
 geno_fn = args[3]
 window = as.integer(args[4])
+phenotype_PCs = as.integer(args[5])
 
 
 #setwd("/Users/datn/github/nf-rasqual/data")
@@ -46,20 +47,45 @@ require(data.table)
 
 set.seed(2022)
 
-randomize <- function(x,g=NULL){
-  # author Natsuhiko Kumasaka
-  if(is.null(g)){
-    n=ncol(x);
-    t(apply(x,1,function(xx){xx[order(runif(n))]}))
-  }else{
-    for(i in unique(g)){
-      x[,g==i]=randomize(x[,g==i,drop=F])
-    }
-    x
-  }
-}
+# randomize <- function(x,g=NULL){
+#   # author Natsuhiko Kumasaka
+#   if(is.null(g)){
+#     n=ncol(x);
+#     t(apply(x,1,function(xx){xx[order(runif(n))]}))
+#   }else{
+#     for(i in unique(g)){
+#       x[,g==i]=randomize(x[,g==i,drop=F])
+#     }
+#     x
+#   }
+# }
 
-rasqualMakeCovariates <- function(counts, size_factors) {
+# rasqualMakeCovariates <- function(counts, size_factors) {
+#   # author Natsuhiko Kumasaka
+#   #Map parameters to Natsuhiko's variables
+#   Y = counts
+#   K = size_factors
+#   n=ncol(Y)
+  
+#   # fpm calculation
+#   fpkm=t(t(Y/K+1)/apply(Y/K,2,sum))*1e6 #  /len*1e9
+  
+#   # Singular value decomposition
+#   fpkm.svd   = svd((log(fpkm)-apply(log(fpkm),1,mean))/apply(log(fpkm),1,sd))
+#   fpkm.svd.r = svd(randomize((log(fpkm)-apply(log(fpkm),1,mean))/apply(log(fpkm),1,sd)))
+  
+#   # Covariate selection
+#   sf=log(apply(Y,2,sum))
+#   covs=fpkm.svd$v[,1:sum(fpkm.svd$d[-n]>fpkm.svd.r$d[-n])]
+#   if(cor(sf,covs[,1])^2<0.9){covs=cbind(sf, covs)}
+  
+#   # Write covariates
+#   return(covs)
+# }
+
+
+
+PCA_Covariates <- function(counts, size_factors, n_PCs = 2) {
   # author Natsuhiko Kumasaka
   #Map parameters to Natsuhiko's variables
   Y = counts
@@ -72,16 +98,12 @@ rasqualMakeCovariates <- function(counts, size_factors) {
   # Singular value decomposition
   fpkm.svd   = svd((log(fpkm)-apply(log(fpkm),1,mean))/apply(log(fpkm),1,sd))
   fpkm.svd.r = svd(randomize((log(fpkm)-apply(log(fpkm),1,mean))/apply(log(fpkm),1,sd)))
-  
-  # Covariate selection
-  sf=log(apply(Y,2,sum))
-  covs=fpkm.svd$v[,1:sum(fpkm.svd$d[-n]>fpkm.svd.r$d[-n])]
-  if(cor(sf,covs[,1])^2<0.9){covs=cbind(sf, covs)}
-  
+  ## author Dat T Nguyen
+  p = prcomp(fpkm)
+  pca = p$rotation[,1:n_PCs]
   # Write covariates
-  return(covs)
+  return(pca)
 }
-
 
 meta = fread(meta_fn, sep = ",")
 meta = as.data.frame(meta)
@@ -112,7 +134,7 @@ size_factors = rasqualCalculateSampleOffsets(count2, gc_correct = FALSE)
 saveRasqualMatrices(list(atac = size_factors), ".", file_suffix = "size_factors")
 
 ## covariates
-covs = rasqualMakeCovariates(count2,size_factors)
+covs = PCA_Covariates(count2, size_factors, phenotype_PCs)
 covs = cbind(meta[,-c(1:6)], covs)
 saveRasqualMatrices(list(atac = covs), ".", file_suffix = "covs")
 

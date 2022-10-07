@@ -28,9 +28,8 @@ params.outdir          = "results"
 
 // running options
 params.chrom           = 1..29 
-params.peer            = 1..20
-params.permute         = 30
-params.genotype_PCs    = 3 
+params.permute         = 20
+params.phenotype_PCs   = 2 
 params.exp_prop        = 0.5
 params.maf             = 0.05
 params.fdr             = 0.1
@@ -39,11 +38,8 @@ params.eqtl_window     = 500000
 
 // pipeline options
 params.atac_qtl          = true
-params.eqtl_qtl          = true
-// params.expression_qtl    = true
-// params.circexplorer2     = true
-// params.salmon            = true
-// params.leafcutter        = true
+params.eqtl_qtl          = false
+
 
 log.info """\
 ================================================================
@@ -58,13 +54,12 @@ log.info """\
     meta                : $params.meta
     outdir              : $params.outdir
     chrom               : $params.chrom
-    peer                : $params.peer
     permute             : $params.permute
     maf                 : $params.maf
     fdr                 : $params.fdr
     eqtl_window         : $params.eqtl_window
     atac_window         : $params.atac_window
-    genotype_PCs        : $params.genotype_PCs
+    phenotype_PCs       : $params.phenotype_PCs
     atac_qtl            : $params.atac_qtl
     eqtl_qtl            : $params.eqtl_qtl
 ================================================================
@@ -75,30 +70,41 @@ nextflow.enable.dsl=2
 
 workflow {
 
-    /// channel general processing
-    atac_bam_ch = channel.fromPath( params.atac_bam, checkIfExists: true )
+    // channel general processing
     chrom_list_ch = channel.from(params.chrom)
-    peer_list_ch = channel.from(params.peer)
-    /// ATAC QTL
-    //atac_bam_ch.collect().view()
-    BAM_rename(params.meta, atac_bam_ch.collect())
-    ADD_AS_vcf(params.genotype, BAM_rename.out)
-    SPLIT_chromosome(chrom_list_ch, ADD_AS_vcf.out, params.atac_count )
-    //SPLIT_chromosome.out.collect().view()
-    PREPROCESS_atac_qtl(chrom_list_ch, params.meta, SPLIT_chromosome.out.collect(), params.atac_window)
-    //PREPROCESS_atac_qtl.out.collect().view()
-    RUN_atac_rasqual(chrom_list_ch, PREPROCESS_atac_qtl.out.collect(), SPLIT_chromosome.out.collect())
-    RUN_atac_rasqual_permutation(params.permute, chrom_list_ch, PREPROCESS_atac_qtl.out.collect(), SPLIT_chromosome.out.collect())
+    // ATAC QTL
+    if( params.atac_qtl ){
+        atac_bam_ch = channel.fromPath( params.atac_bam, checkIfExists: true )
+        ATAC_BAM_rename(params.meta, atac_bam_ch.collect())
+        ATAC_ADD_AS_vcf(params.genotype, ATAC_BAM_rename.out)
+        ATAC_SPLIT_chromosome(chrom_list_ch, ATAC_ADD_AS_vcf.out, params.atac_count )
+        ATAC_PREPROCESS_atac_qtl(chrom_list_ch, params.meta, ATAC_SPLIT_chromosome.out.collect(), params.atac_window, params.phenotype_PCs)
+        //RUN_atac_rasqual(chrom_list_ch, PREPROCESS_atac_qtl.out.collect(), SPLIT_chromosome.out.collect())
+        //RUN_atac_rasqual_permutation(params.permute, chrom_list_ch, PREPROCESS_atac_qtl.out.collect(), SPLIT_chromosome.out.collect())
+        //chrom_list_ch.max().view()
+        //MERGE_atac_rasqual(chrom_list_ch.max(), RUN_atac_rasqual.out.collect())
+        //MERGE_atac_rasqual_permutation(params.permute, chrom_list_ch.max(), RUN_atac_rasqual_permutation.out.collect())
+    }
 
-    //chrom_list_ch.max().view()
-    MERGE_atac_rasqual(chrom_list_ch.max(), RUN_atac_rasqual.out.collect())
-    MERGE_atac_rasqual_permutation(params.permute, chrom_list_ch.max(), RUN_atac_rasqual_permutation.out.collect())
+    if( params.eqtl_qtl ){
+        //atac_bam_ch = channel.fromPath( params.atac_bam, checkIfExists: true )
+        //ATAC_BAM_rename(params.meta, atac_bam_ch.collect())
+        //ATAC_ADD_AS_vcf(params.genotype, ATAC_BAM_rename.out)
+        //ATAC_SPLIT_chromosome(chrom_list_ch, ATAC_ADD_AS_vcf.out, params.atac_count )
+        //ATAC_PREPROCESS_atac_qtl(chrom_list_ch, params.meta, ATAC_SPLIT_chromosome.out.collect(), params.atac_window, params.phenotype_PCs)
+        //RUN_atac_rasqual(chrom_list_ch, PREPROCESS_atac_qtl.out.collect(), SPLIT_chromosome.out.collect())
+        //RUN_atac_rasqual_permutation(params.permute, chrom_list_ch, PREPROCESS_atac_qtl.out.collect(), SPLIT_chromosome.out.collect())
+        //chrom_list_ch.max().view()
+        //MERGE_atac_rasqual(chrom_list_ch.max(), RUN_atac_rasqual.out.collect())
+        //MERGE_atac_rasqual_permutation(params.permute, chrom_list_ch.max(), RUN_atac_rasqual_permutation.out.collect())
+    }
 }
 
+// rename BAM
 
-process BAM_rename {
+process ATAC_BAM_rename {
     container 'ndatth/rasqual:v0.0.0'
-    publishDir 'bam_dir', mode: 'symlink', overwrite: true
+    publishDir 'ATAC_bam_dir', mode: 'symlink', overwrite: true
     memory '8 GB'
 
     input:
@@ -110,14 +116,58 @@ process BAM_rename {
 
     script:
     """
-    rename_bam.R ${meta}
+    ATAC_rename_bam.R ${meta}
     """
 }
 
-
-process ADD_AS_vcf {
+process RNA_BAM_rename {
     container 'ndatth/rasqual:v0.0.0'
-    publishDir 'atac_AS_vcf', mode: 'symlink', overwrite: true
+    publishDir 'RNA_bam_dir', mode: 'symlink', overwrite: true
+    memory '8 GB'
+
+    input:
+    path meta
+    path bamfiles
+
+    output:
+    path "copied_files/*{.bam,.bai}"
+
+    script:
+    """
+    RNA_rename_bam.R ${meta}
+    """
+}
+
+// add allel specific inforation
+
+process ATAC_ADD_AS_vcf {
+    container 'ndatth/rasqual:v0.0.0'
+    publishDir 'ATAC_AS_vcf', mode: 'symlink', overwrite: true
+    memory '8 GB'
+
+    input:
+    path in_vcf
+    path bamfiles
+
+    output:
+    tuple path("processed.vcf.gz"), path("processed.vcf.gz.tbi")
+
+    script:
+    """
+    ls \$PWD/*bam > bam_list.txt
+    zcat $in_vcf | sed 's/ssa0//g' | sed 's/ssa//g' | bgzip > tem.vcf.gz
+    bcftools index -t tem.vcf.gz
+    createASVCF_fixed_path.sh paired_end bam_list.txt tem.vcf.gz processed.vcf.gz rna
+    bcftools index -t processed.vcf.gz
+    rm tem.vcf.gz tem.vcf.gz.tbi
+    """
+}
+
+// add allel specific inforation
+
+process RNA_ADD_AS_vcf {
+    container 'ndatth/rasqual:v0.0.0'
+    publishDir 'RNA_AS_vcf', mode: 'symlink', overwrite: true
     memory '8 GB'
 
     input:
@@ -139,31 +189,61 @@ process ADD_AS_vcf {
 }
 
 
+// slipt chomosome
 
-
-
-process SPLIT_chromosome {
+process ATAC_SPLIT_chromosome {
     container 'ndatth/rasqual:v0.0.0'
-    publishDir 'split_chrom', mode: 'symlink', overwrite: true
+    publishDir 'ATAC_split_chrom', mode: 'symlink', overwrite: true
     memory '8 GB'
 
     input:
     val chr
     path in_vcf
-    path in_atac_exp
+    path in_exp
 
     output:
-    tuple path("${chr}.vcf.gz"), path("${chr}.vcf.gz.tbi"), path("${chr}.atac_count.txt")
+    tuple path("${chr}.vcf.gz"), path("${chr}.vcf.gz.tbi"), path("${chr}_count.txt")
 
     script:
     """
-    atac_exp_filter.sh $in_atac_exp ${chr}.atac_count.txt $chr
+    ATAC_exp_filter.sh $in_exp ${chr}_count.txt $chr
     bcftools view processed.vcf.gz --regions $chr -Oz -o ${chr}.vcf.gz
     bcftools index -t ${chr}.vcf.gz
     """
-
 }
 
+
+process RNA_SPLIT_chromosome {
+    container 'ndatth/rasqual:v0.0.0'
+    publishDir 'RNA_split_chrom', mode: 'symlink', overwrite: true
+    memory '8 GB'
+
+    input:
+    val chr
+    path in_vcf
+    path in_exp
+
+    output:
+    tuple path("${chr}.vcf.gz"), path("${chr}.vcf.gz.tbi"), path("${chr}_count.txt")
+
+    script:
+    """
+    RNA_exp_filter.sh $in_exp ${chr}_count.txt $chr
+    bcftools view processed.vcf.gz --regions $chr -Oz -o ${chr}.vcf.gz
+    bcftools index -t ${chr}.vcf.gz
+    """
+}
+
+
+
+
+
+
+
+
+
+
+// proprocessing
 
 
 process PREPROCESS_atac_qtl {
@@ -176,6 +256,7 @@ process PREPROCESS_atac_qtl {
     path meta
     path split_chrom
     val window
+    val phenotype_PCs
 
     output:
     tuple path("${chr}_atac.covs.bin"), path("${chr}_atac.covs.txt"), path("${chr}_atac.exp.bin"), path("${chr}_atac.exp.txt"), path("${chr}_atac.size_factors.bin"), path("${chr}_atac.size_factors.txt"), path("${chr}_snp_counts.tsv")
@@ -183,7 +264,7 @@ process PREPROCESS_atac_qtl {
 
     script:
     """
-    atac_rasqual_processor.R ${meta} ${chr}.atac_count.txt ${chr}.vcf.gz $window
+    ATAC_rasqual_processor.R ${meta} ${chr}_count.txt ${chr}.vcf.gz $window $phenotype_PCs
     ## rename files
     mv atac.covs.bin ${chr}_atac.covs.bin
     mv atac.covs.txt ${chr}_atac.covs.txt
@@ -194,6 +275,10 @@ process PREPROCESS_atac_qtl {
     mv snp_counts.tsv ${chr}_snp_counts.tsv
     """
 }
+
+
+
+
 
 
 process RUN_atac_rasqual {
