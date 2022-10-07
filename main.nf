@@ -206,7 +206,7 @@ process ATAC_SPLIT_chromosome {
     """
     awk 'NR==1{print }' $in_exp > ${chr}_count.txt
     awk 'NR==2{print }' $in_exp >> ${chr}_count.txt
-    awk -v chr=$chr '{ if (\$2 == $chr) { print } }' $in >> ${chr}_count.txt
+    awk -v chr=$chr '{ if (\$2 == $chr) { print } }' $in_exp >> ${chr}_count.txt
 
     bcftools view processed.vcf.gz --regions $chr -Oz -o ${chr}.vcf.gz
     bcftools index -t ${chr}.vcf.gz
