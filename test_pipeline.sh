@@ -14,14 +14,23 @@ module load Nextflow/21.03
 module load singularity/rpm
 
 
-cd /mnt/SCRATCH/ngda/paper1/nf-rasqual
+cd /mnt/SCRATCH/ngda/nf-rasqual
 
 git pull
 
-atac_bam=/mnt/users/ngda/ngs_data/atlantic_salmon/atac/brain/bam/*{.bam,.bai}
-atac_count=/mnt/users/ngda/ngs_data/atlantic_salmon/atac/brain/consensus_peaks.mLb.clN.featureCounts.txt
+# ATAC seq input
+atac_bam=/mnt/users/ngda/ngs_data/atlantic_salmon/brain/atac_bam/*{.bam,.bai}
+atac_count=/mnt/users/ngda/ngs_data/atlantic_salmon/brain/atac_consensus_peak_featureCounts.txt
+
+# RNA input
+rna_bam=/mnt/users/ngda/ngs_data/atlantic_salmon/brain/rna_bam/*{.bam,.bai}
+rna_count=/mnt/users/ngda/ngs_data/atlantic_salmon/brain/rna_gene_level_count_salmon.txt
+
+# SNP genotype input - phased - added GP
 genotype=/mnt/users/ngda/ngs_data/atlantic_salmon/wgs/processed_all_chrom.vcf.gz
 
+##
 outdir=results
 
-nextflow run main.nf -resume --atac_bam $atac_bam --atac_count $atac_count --genotype $genotype --outdir $outdir
+##
+nextflow run main.nf -resume --atac_bam $atac_bam --atac_count $atac_count --rna_bam $rna_bam --rna_count $rna_count --genotype $genotype --outdir $outdir

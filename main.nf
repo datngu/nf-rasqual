@@ -21,7 +21,9 @@ params.genome          = "$baseDir/data/ref/genome.fa"
 params.cdna            = "$baseDir/data/ref/cdna.fa"
 params.annotation      = "$baseDir/data/ref/annotation.gtf"
 params.atac_bam        = "$baseDir/data/atac_bam/*.bam"
-params.atac_count      = "$baseDir/data/atac_count.tsv"
+params.atac_count      = "$baseDir/data/atac_consensus_peak_featureCounts.txt"
+params.rna_bam         = "$baseDir/data/rna_bam/*.bam"
+params.rna_count       = "$baseDir/data/rna_gene_level_count_salmon.txt"
 params.genotype        = "$baseDir/data/genotype.vcf.gz"
 params.meta            = "$baseDir/data/meta/brain.csv"
 params.outdir          = "results"
@@ -50,6 +52,8 @@ log.info """\
     annotation          : $params.annotation
     atac_bam            : $params.atac_bam
     atac_count          : $params.atac_count
+    rna_bam             : $params.rna_bam
+    rna_count           : $params.rna_count
     genotype            : $params.genotype 
     meta                : $params.meta
     outdir              : $params.outdir
