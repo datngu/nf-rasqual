@@ -82,7 +82,7 @@ workflow {
         ATAC_BAM_rename(params.meta, atac_bam_ch.collect())
         ATAC_ADD_AS_vcf(params.genotype, ATAC_BAM_rename.out)
         ATAC_SPLIT_chromosome(chrom_list_ch, ATAC_ADD_AS_vcf.out, params.atac_count )
-        //ATAC_PREPROCESS_rasqual(chrom_list_ch, params.meta, ATAC_SPLIT_chromosome.out.collect(), params.atac_window, params.phenotype_PCs)
+        ATAC_PREPROCESS_rasqual(chrom_list_ch, params.meta, ATAC_SPLIT_chromosome.out.collect(), params.genome, params.atac_window, params.phenotype_PCs)
         //ATAC_RUN_rasqual_permutation(chrom_list_ch, ATAC_PREPROCESS_rasqual.out.collect(), ATAC_SPLIT_chromosome.out.collect())
         //RUN_atac_rasqual_permutation(params.permute, chrom_list_ch, ATAC_PREPROCESS_rasqual.out.collect(), ATAC_SPLIT_chromosome.out.collect())
         //chrom_list_ch.max().view()
@@ -229,7 +229,9 @@ process RNA_SPLIT_chromosome {
 
     script:
     """
-    RNA_exp_filter.sh $in_exp ${chr}_count.txt $chr
+    awk 'NR==1{print }' $in_exp > ${chr}_count.txt
+    awk -v chr=$chr '{ if (\$2 == $chr) { print } }' $in_exp >> ${chr}_count.txt
+    
     bcftools view processed.vcf.gz --regions $chr -Oz -o ${chr}.vcf.gz
     bcftools index -t ${chr}.vcf.gz
     """
@@ -250,12 +252,14 @@ process RNA_SPLIT_chromosome {
 process ATAC_PREPROCESS_rasqual {
     container 'ndatth/rasqual:v0.0.0'
     publishDir 'atac_qtl_input', mode: 'symlink', overwrite: true
-    memory '8 GB'
+    memory '64 GB'
+    cpus 8
 
     input:
     val chr
     path meta
     path split_chrom
+    path genome
     val window
     val phenotype_PCs
 
@@ -265,7 +269,7 @@ process ATAC_PREPROCESS_rasqual {
 
     script:
     """
-    ATAC_rasqual_processor.R ${meta} ${chr}_count.txt ${chr}.vcf.gz $window $phenotype_PCs
+    ATAC_rasqual_processor.R ${meta} ${chr}_count.txt ${chr}.vcf.gz $genome $window $phenotype_PCs ${task.cpus}
     ## rename files
     mv atac.covs.bin ${chr}_atac.covs.bin
     mv atac.covs.txt ${chr}_atac.covs.txt
