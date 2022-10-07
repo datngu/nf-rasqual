@@ -83,9 +83,11 @@ workflow {
         ATAC_ADD_AS_vcf(params.genotype, ATAC_BAM_rename.out)
         ATAC_SPLIT_chromosome(chrom_list_ch, ATAC_ADD_AS_vcf.out, params.atac_count )
         ATAC_PREPROCESS_rasqual(chrom_list_ch, params.meta, ATAC_SPLIT_chromosome.out.collect(), params.genome, params.atac_window, params.phenotype_PCs)
+
         ATAC_RUN_rasqual(chrom_list_ch, ATAC_PREPROCESS_rasqual.out.collect(), ATAC_SPLIT_chromosome.out.collect())
         ATAC_RUN_rasqual_permutation(params.permute, chrom_list_ch, ATAC_PREPROCESS_rasqual.out.collect(), ATAC_SPLIT_chromosome.out.collect())
         //chrom_list_ch.max().view()
+        
         ATAC_MERGE_rasqual(chrom_list_ch.max(), ATAC_RUN_rasqual.out.collect())
         ATAC_MERGE_rasqual_permutation(params.permute, chrom_list_ch.max(), ATAC_RUN_rasqual_permutation.out.collect())
     }
