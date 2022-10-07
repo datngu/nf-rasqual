@@ -82,26 +82,19 @@ workflow {
         ATAC_BAM_rename(params.meta, atac_bam_ch.collect())
         ATAC_ADD_AS_vcf(params.genotype, ATAC_BAM_rename.out)
         ATAC_SPLIT_chromosome(chrom_list_ch, ATAC_ADD_AS_vcf.out, params.atac_count )
-        ATAC_PREPROCESS_rasqual(chrom_list_ch, params.meta, ATAC_SPLIT_chromosome.out.collect(), params.atac_window, params.phenotype_PCs)
-        //RUN_atac_rasqual(chrom_list_ch, PREPROCESS_atac_qtl.out.collect(), SPLIT_chromosome.out.collect())
-        //RUN_atac_rasqual_permutation(params.permute, chrom_list_ch, PREPROCESS_atac_qtl.out.collect(), SPLIT_chromosome.out.collect())
+        //ATAC_PREPROCESS_rasqual(chrom_list_ch, params.meta, ATAC_SPLIT_chromosome.out.collect(), params.atac_window, params.phenotype_PCs)
+        //ATAC_RUN_rasqual_permutation(chrom_list_ch, ATAC_PREPROCESS_rasqual.out.collect(), ATAC_SPLIT_chromosome.out.collect())
+        //RUN_atac_rasqual_permutation(params.permute, chrom_list_ch, ATAC_PREPROCESS_rasqual.out.collect(), ATAC_SPLIT_chromosome.out.collect())
         //chrom_list_ch.max().view()
-        //MERGE_atac_rasqual(chrom_list_ch.max(), RUN_atac_rasqual.out.collect())
-        //MERGE_atac_rasqual_permutation(params.permute, chrom_list_ch.max(), RUN_atac_rasqual_permutation.out.collect())
+        //ATAC_MERGE_rasqual(chrom_list_ch.max(), RUN_atac_rasqual.out.collect())
+        //ATAC_MERGE_rasqual_permutation(params.permute, chrom_list_ch.max(), RUN_atac_rasqual_permutation.out.collect())
     }
 
     if( params.eqtl_qtl ){
         rna_bam_ch = channel.fromPath( params.rna_bam, checkIfExists: true )
-        ATAC_BAM_rename(params.meta, rna_bam_ch.collect())
+        RNA_BAM_rename(params.meta, rna_bam_ch.collect())
         RNA_ADD_AS_vcf(params.genotype, RNA_BAM_rename.out)
         RNA_SPLIT_chromosome(chrom_list_ch, RNA_ADD_AS_vcf.out, params.atac_count )
-
-        //ATAC_PREPROCESS_atac_qtl(chrom_list_ch, params.meta, ATAC_SPLIT_chromosome.out.collect(), params.atac_window, params.phenotype_PCs)
-        //RUN_atac_rasqual(chrom_list_ch, PREPROCESS_atac_qtl.out.collect(), SPLIT_chromosome.out.collect())
-        //RUN_atac_rasqual_permutation(params.permute, chrom_list_ch, PREPROCESS_atac_qtl.out.collect(), SPLIT_chromosome.out.collect())
-        //chrom_list_ch.max().view()
-        //MERGE_atac_rasqual(chrom_list_ch.max(), RUN_atac_rasqual.out.collect())
-        //MERGE_atac_rasqual_permutation(params.permute, chrom_list_ch.max(), RUN_atac_rasqual_permutation.out.collect())
     }
 }
 
@@ -286,7 +279,7 @@ process ATAC_PREPROCESS_rasqual {
 
 
 
-process RUN_atac_rasqual {
+process ATAC_RUN_rasqual {
     container 'ndatth/rasqual:v0.0.0'
     publishDir 'results_rasqual', mode: 'symlink', overwrite: true
     memory '64 GB'
@@ -308,7 +301,7 @@ process RUN_atac_rasqual {
 }
 
 
-process MERGE_atac_rasqual {
+process ATAC_MERGE_rasqual {
     container 'ndatth/rasqual:v0.0.0'
     publishDir 'results_rasqual', mode: 'symlink', overwrite: true
     memory '8 GB'
@@ -332,7 +325,7 @@ process MERGE_atac_rasqual {
 }
 
 
-process RUN_atac_rasqual_permutation {
+process ATAC_RUN_rasqual_permutation {
     container 'ndatth/rasqual:v0.0.0'
     publishDir 'results_rasqual_permutaion', mode: 'symlink', overwrite: true
     memory '64 GB'
@@ -355,7 +348,7 @@ process RUN_atac_rasqual_permutation {
 }
 
 
-process MERGE_atac_rasqual_permutation {
+process ATAC_MERGE_rasqual_permutation {
     container 'ndatth/rasqual:v0.0.0'
     publishDir 'results_rasqual_permutaion', mode: 'symlink', overwrite: true
     memory '8 GB'
