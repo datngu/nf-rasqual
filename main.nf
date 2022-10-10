@@ -84,15 +84,15 @@ workflow {
         ATAC_ADD_AS_vcf(params.genotype, ATAC_BAM_rename.out)
 
         ATAC_PROCESS_covariates(params.meta, params.atac_count, params.genotype)
-        //ATAC_SPLIT_chromosome(chrom_list_ch, ATAC_ADD_AS_vcf.out, params.atac_count )
-        //ATAC_PREPROCESS_rasqual(chrom_list_ch, params.meta, ATAC_SPLIT_chromosome.out.collect(), params.genome, params.atac_window, params.phenotype_PCs)
+        ATAC_SPLIT_chromosome(chrom_list_ch, ATAC_ADD_AS_vcf.out, params.atac_count )
+        ATAC_PREPROCESS_rasqual(chrom_list_ch, params.meta, ATAC_SPLIT_chromosome.out.collect(), params.genome)
 
-        //ATAC_RUN_rasqual(chrom_list_ch, ATAC_PREPROCESS_rasqual.out.collect(), ATAC_SPLIT_chromosome.out.collect())
-        //ATAC_RUN_rasqual_permutation(params.permute, chrom_list_ch, ATAC_PREPROCESS_rasqual.out.collect(), ATAC_SPLIT_chromosome.out.collect())
+        ATAC_RUN_rasqual(chrom_list_ch, ATAC_PREPROCESS_rasqual.out.collect(), ATAC_SPLIT_chromosome.out.collect(), ATAC_PROCESS_covariates.out)
+        ATAC_RUN_rasqual_permutation(params.permute, chrom_list_ch, ATAC_PREPROCESS_rasqual.out.collect(), ATAC_SPLIT_chromosome.out.collect(), ATAC_PROCESS_covariates.out)
         //chrom_list_ch.max().view()
 
-        //ATAC_MERGE_rasqual(chrom_list_ch.max(), ATAC_RUN_rasqual.out.collect())
-        //ATAC_MERGE_rasqual_permutation(params.permute, chrom_list_ch.max(), ATAC_RUN_rasqual_permutation.out.collect())
+        ATAC_MERGE_rasqual(chrom_list_ch.max(), ATAC_RUN_rasqual.out.collect())
+        ATAC_MERGE_rasqual_permutation(params.permute, chrom_list_ch.max(), ATAC_RUN_rasqual_permutation.out.collect())
     }
 
     if( params.eqtl_qtl ){
@@ -291,16 +291,14 @@ process ATAC_PREPROCESS_rasqual {
     path meta
     path split_chrom
     path genome
-    val window
-    val phenotype_PCs
 
     output:
-    tuple path("${chr}_atac.covs.bin"), path("${chr}_atac.covs.txt"), path("${chr}_atac.exp.bin"), path("${chr}_atac.exp.txt"), path("${chr}_atac.size_factors.bin"), path("${chr}_atac.size_factors.txt"), path("${chr}_snp_counts.tsv")
+    tuple path(path("${chr}_atac.exp.bin"), path("${chr}_atac.exp.txt"), path("${chr}_atac.size_factors.bin"), path("${chr}_atac.size_factors.txt"), path("${chr}_snp_counts.tsv")
 
 
     script:
     """
-    ATAC_rasqual_processor.R ${meta} ${chr}_count.txt ${chr}.vcf.gz $genome $window $phenotype_PCs ${task.cpus}
+    ATAC_rasqual_processor.R ${meta} ${chr}_count.txt ${chr}.vcf.gz $genome $params.window ${task.cpus}
     ## rename files
     mv atac.covs.bin ${chr}_atac.covs.bin
     mv atac.covs.txt ${chr}_atac.covs.txt
@@ -327,6 +325,7 @@ process ATAC_RUN_rasqual {
     val chr
     path preproces_data
     path split_chrom
+    path covariates
 
     output:
     path("${chr}_rasqual_lead_snp.txt")
@@ -334,7 +333,7 @@ process ATAC_RUN_rasqual {
 
     script:
     """
-    rasqual.R vcf=${chr}.vcf.gz y=${chr}_atac.exp.bin k=${chr}_atac.size_factors.bin x=${chr}_atac.covs.bin x_txt=${chr}_atac.covs.txt meta=${chr}_snp_counts.tsv out=${chr}_rasqual_lead_snp.txt cpu=${task.cpus}
+    rasqual.R vcf=${chr}.vcf.gz y=${chr}_atac.exp.bin k=${chr}_atac.size_factors.bin x=atac.covs_all_chrom.bin x_txt=atac.covs_all_chrom.txt meta=${chr}_snp_counts.tsv out=${chr}_rasqual_lead_snp.txt cpu=${task.cpus}
     """
 }
 
@@ -374,6 +373,7 @@ process ATAC_RUN_rasqual_permutation {
     val chr
     path preproces_data
     path split_chrom
+    path covariates
 
     output:
     path("${chr}_permute_*_rasqual_lead_snp.txt")
@@ -381,7 +381,7 @@ process ATAC_RUN_rasqual_permutation {
 
     script:
     """
-    rasqual_permute.sh ${chr}.vcf.gz ${chr}_atac.exp.bin ${chr}_atac.size_factors.bin ${chr}_atac.covs.bin ${chr}_atac.covs.txt ${chr}_snp_counts.tsv ${task.cpus} ${permute} ${chr}
+    rasqual_permute.sh ${chr}.vcf.gz ${chr}_atac.exp.bin ${chr}_atac.size_factors.bin atac.covs_all_chrom.bin atac.covs_all_chrom.txt ${chr}_snp_counts.tsv ${task.cpus} ${permute} ${chr}
     """
 }
 
