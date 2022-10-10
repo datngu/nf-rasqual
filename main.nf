@@ -76,20 +76,23 @@ workflow {
 
     // channel general processing
     chrom_list_ch = channel.from(params.chrom)
+    chrom_list_ch.collect().toList().view()
     // ATAC QTL
     if( params.atac_qtl ){
         atac_bam_ch = channel.fromPath( params.atac_bam, checkIfExists: true )
         ATAC_BAM_rename(params.meta, atac_bam_ch.collect())
         ATAC_ADD_AS_vcf(params.genotype, ATAC_BAM_rename.out)
-        ATAC_SPLIT_chromosome(chrom_list_ch, ATAC_ADD_AS_vcf.out, params.atac_count )
-        ATAC_PREPROCESS_rasqual(chrom_list_ch, params.meta, ATAC_SPLIT_chromosome.out.collect(), params.genome, params.atac_window, params.phenotype_PCs)
+        ATAC_count_filtering(params.atac_count, chrom_list_ch.collect().toList())
 
-        ATAC_RUN_rasqual(chrom_list_ch, ATAC_PREPROCESS_rasqual.out.collect(), ATAC_SPLIT_chromosome.out.collect())
-        ATAC_RUN_rasqual_permutation(params.permute, chrom_list_ch, ATAC_PREPROCESS_rasqual.out.collect(), ATAC_SPLIT_chromosome.out.collect())
+        //ATAC_SPLIT_chromosome(chrom_list_ch, ATAC_ADD_AS_vcf.out, params.atac_count )
+        //ATAC_PREPROCESS_rasqual(chrom_list_ch, params.meta, ATAC_SPLIT_chromosome.out.collect(), params.genome, params.atac_window, params.phenotype_PCs)
+
+        //ATAC_RUN_rasqual(chrom_list_ch, ATAC_PREPROCESS_rasqual.out.collect(), ATAC_SPLIT_chromosome.out.collect())
+        //ATAC_RUN_rasqual_permutation(params.permute, chrom_list_ch, ATAC_PREPROCESS_rasqual.out.collect(), ATAC_SPLIT_chromosome.out.collect())
         //chrom_list_ch.max().view()
 
-        ATAC_MERGE_rasqual(chrom_list_ch.max(), ATAC_RUN_rasqual.out.collect())
-        ATAC_MERGE_rasqual_permutation(params.permute, chrom_list_ch.max(), ATAC_RUN_rasqual_permutation.out.collect())
+        //ATAC_MERGE_rasqual(chrom_list_ch.max(), ATAC_RUN_rasqual.out.collect())
+        //ATAC_MERGE_rasqual_permutation(params.permute, chrom_list_ch.max(), ATAC_RUN_rasqual_permutation.out.collect())
     }
 
     if( params.eqtl_qtl ){
@@ -138,6 +141,29 @@ process RNA_BAM_rename {
     """
 }
 
+// count filtering
+
+
+process ATAC_count_filtering {
+    container 'ndatth/rasqual:v0.0.0'
+    publishDir 'ATAC_count_filtering', mode: 'symlink', overwrite: true
+    memory '8 GB'
+
+    input:
+    path count
+    val chrom_list
+
+    output:
+    path "filtered_count.txt"
+
+    script:
+    """
+    ATAC_filtering.R $count filtered_count.txt $chrom_list
+    """
+}
+
+
+
 // add allel specific inforation
 
 process ATAC_ADD_AS_vcf {
@@ -163,7 +189,6 @@ process ATAC_ADD_AS_vcf {
     """
 }
 
-// add allel specific inforation
 
 process RNA_ADD_AS_vcf {
     container 'ndatth/rasqual:v0.0.0'
@@ -187,6 +212,31 @@ process RNA_ADD_AS_vcf {
     rm tem.vcf.gz tem.vcf.gz.tbi
     """
 }
+
+
+
+// PCA
+
+process ATAC_PROCESS_covariates {
+    container 'ndatth/rasqual:v0.0.0'
+    publishDir 'ATAC_covariates', mode: 'symlink', overwrite: true
+    memory '8 GB'
+
+    input:
+    path meta
+    path atac_count
+    path genome
+    val phenotype_PCs
+
+    output:
+    tuple path("atac.covs_all_chrom.bin"), path("atac.covs_all_chrom.txt")
+
+    script:
+    """
+    ATAC_covariates.R $meta $atac_count $genome $phenotype_PCs
+    """
+}
+
 
 
 // slipt chomosome

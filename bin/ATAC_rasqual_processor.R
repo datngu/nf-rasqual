@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 
 options(stringsAsFactors=FALSE)
-syntax='\nUsage:\t./ATAC_rasqual_processor.R meta_csv feature_count_txt genotype_vcf genome.fa cis_window phenotype_PCs n_core'
+syntax='\nUsage:\t./ATAC_rasqual_processor.R meta_csv feature_count_txt genotype_vcf genome.fa cis_window n_core'
 
 # defaut outputs:
 # atac.covs.bin - atac.covs.txt
@@ -25,8 +25,7 @@ count_fn = args[2]
 geno_fn = args[3]
 genome_fn = args[4]
 cis_window = as.integer(args[5])
-phenotype_PCs = as.integer(args[6])
-if(length(args) >= 7) cpu = as.integer(args[7])
+if(length(args) >= 6) cpu = as.integer(args[6])
 if (is.na(cpu)) cpu=1
 cpu = as.integer(cpu)
 
@@ -46,10 +45,8 @@ cpu = as.integer(cpu)
 
 #############
 # output:
-# atac.covs.bin - atac.covs.txt
 # atac.exp.bin - atac.exp.txt
 # atac.size_factors.bin - atac.size_factors.txt
-# snp_counts.tsv
 #############
 
 
@@ -63,28 +60,6 @@ registerDoParallel(cores=cpu)
 
 
 set.seed(2022)
-
-
-PCA_Covariates <- function(counts, size_factors, n_PCs = 2) {
-  # author Natsuhiko Kumasaka
-  #Map parameters to Natsuhiko's variables
-  Y = counts
-  K = size_factors
-  n=ncol(Y)
-  
-  # fpm calculation
-  fpkm=t(t(Y/K+1)/apply(Y/K,2,sum))*1e6 #  /len*1e9
-  
-  ## author Dat T Nguyen
-  p = prcomp(fpkm)
-  pca = p$rotation[,1:n_PCs]
-  # Write covariates
-  return(pca)
-}
-
-
-
-
 
 
 get_GC <- function(genome, feature_info){
@@ -161,9 +136,9 @@ GC = data.frame(gene_id = row.names(count2), percentage_gc_content = gc_percenta
 size_factors = rasqualCalculateSampleOffsets(count2, GC)
 saveRasqualMatrices(list(atac = size_factors), ".", file_suffix = "size_factors")
 
-## covariates
-covs = PCA_Covariates(count2, size_factors, phenotype_PCs)
-covs = cbind(meta[,-c(1:6)], covs)
-saveRasqualMatrices(list(atac = covs), ".", file_suffix = "covs")
+# ## covariates
+# covs = PCA_Covariates(count2, size_factors, phenotype_PCs)
+# covs = cbind(meta[,-c(1:6)], covs)
+# saveRasqualMatrices(list(atac = covs), ".", file_suffix = "covs")
 
 
