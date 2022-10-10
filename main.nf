@@ -76,7 +76,7 @@ workflow {
 
     // channel general processing
     chrom_list_ch = channel.from(params.chrom)
-    chrom_list_ch.collect().toList().view()
+    //chrom_list_ch.collect().toList().view()
     // ATAC QTL
     if( params.atac_qtl ){
         atac_bam_ch = channel.fromPath( params.atac_bam, checkIfExists: true )
@@ -89,7 +89,6 @@ workflow {
 
         ATAC_RUN_rasqual(chrom_list_ch, ATAC_PREPROCESS_rasqual.out.collect(), ATAC_SPLIT_chromosome.out.collect(), ATAC_PROCESS_covariates.out)
         ATAC_RUN_rasqual_permutation(chrom_list_ch, ATAC_PREPROCESS_rasqual.out.collect(), ATAC_SPLIT_chromosome.out.collect(), ATAC_PROCESS_covariates.out)
-        //chrom_list_ch.max().view()
 
         ATAC_MERGE_rasqual(chrom_list_ch.max(), ATAC_RUN_rasqual.out.collect())
         ATAC_MERGE_rasqual_permutation(chrom_list_ch.max(), ATAC_RUN_rasqual_permutation.out.collect())
@@ -298,10 +297,8 @@ process ATAC_PREPROCESS_rasqual {
 
     script:
     """
-    ATAC_rasqual_processor.R ${meta} ${chr}_count.txt ${chr}.vcf.gz $genome $params.window ${task.cpus}
+    ATAC_rasqual_processor.R ${meta} ${chr}_count.txt ${chr}.vcf.gz $genome $params.atac_window ${task.cpus}
     ## rename files
-    mv atac.covs.bin ${chr}_atac.covs.bin
-    mv atac.covs.txt ${chr}_atac.covs.txt
     mv atac.exp.bin ${chr}_atac.exp.bin
     mv atac.exp.txt ${chr}_atac.exp.txt
     mv atac.size_factors.bin ${chr}_atac.size_factors.bin
