@@ -83,7 +83,7 @@ workflow {
         ATAC_BAM_rename(params.meta, atac_bam_ch.collect())
         ATAC_ADD_AS_vcf(params.genotype, ATAC_BAM_rename.out)
 
-        ATAC_PROCESS_covariates(param.meta, params.atac_count, params.genome)
+        ATAC_PROCESS_covariates(params.meta, params.atac_count, params.genome)
         //ATAC_SPLIT_chromosome(chrom_list_ch, ATAC_ADD_AS_vcf.out, params.atac_count )
         //ATAC_PREPROCESS_rasqual(chrom_list_ch, params.meta, ATAC_SPLIT_chromosome.out.collect(), params.genome, params.atac_window, params.phenotype_PCs)
 
