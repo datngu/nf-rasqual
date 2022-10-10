@@ -88,11 +88,11 @@ workflow {
         ATAC_PREPROCESS_rasqual(chrom_list_ch, params.meta, ATAC_SPLIT_chromosome.out.collect(), params.genome)
 
         ATAC_RUN_rasqual(chrom_list_ch, ATAC_PREPROCESS_rasqual.out.collect(), ATAC_SPLIT_chromosome.out.collect(), ATAC_PROCESS_covariates.out)
-        ATAC_RUN_rasqual_permutation(params.permute, chrom_list_ch, ATAC_PREPROCESS_rasqual.out.collect(), ATAC_SPLIT_chromosome.out.collect(), ATAC_PROCESS_covariates.out)
+        ATAC_RUN_rasqual_permutation(chrom_list_ch, ATAC_PREPROCESS_rasqual.out.collect(), ATAC_SPLIT_chromosome.out.collect(), ATAC_PROCESS_covariates.out)
         //chrom_list_ch.max().view()
 
         ATAC_MERGE_rasqual(chrom_list_ch.max(), ATAC_RUN_rasqual.out.collect())
-        ATAC_MERGE_rasqual_permutation(params.permute, chrom_list_ch.max(), ATAC_RUN_rasqual_permutation.out.collect())
+        ATAC_MERGE_rasqual_permutation(chrom_list_ch.max(), ATAC_RUN_rasqual_permutation.out.collect())
     }
 
     if( params.eqtl_qtl ){
@@ -369,7 +369,6 @@ process ATAC_RUN_rasqual_permutation {
     cpus 16
 
     input:
-    val permute
     val chr
     path preproces_data
     path split_chrom
@@ -381,7 +380,7 @@ process ATAC_RUN_rasqual_permutation {
 
     script:
     """
-    rasqual_permute.sh ${chr}.vcf.gz ${chr}_atac.exp.bin ${chr}_atac.size_factors.bin atac.covs_all_chrom.bin atac.covs_all_chrom.txt ${chr}_snp_counts.tsv ${task.cpus} ${permute} ${chr}
+    rasqual_permute.sh ${chr}.vcf.gz ${chr}_atac.exp.bin ${chr}_atac.size_factors.bin atac.covs_all_chrom.bin atac.covs_all_chrom.txt ${chr}_snp_counts.tsv ${task.cpus} ${params.permute} ${chr}
     """
 }
 
@@ -393,7 +392,6 @@ process ATAC_MERGE_rasqual_permutation {
     cpus 1
 
     input:
-    val permute
     val max_chr
     path atac_rasqual_results
 
@@ -403,7 +401,7 @@ process ATAC_MERGE_rasqual_permutation {
 
     script:
     """
-    for i in \$(seq 1 $permute)
+    for i in \$(seq 1 $params.permute)
     do
         for chr in \$(seq 1 $max_chr)
         do
