@@ -197,7 +197,6 @@ process RNA_ADD_AS_vcf {
 
 // PCA
 
-ATAC_PROCESS_covariates()
 process ATAC_PROCESS_covariates {
     container 'ndatth/rasqual:v0.0.0'
     publishDir 'ATAC_covariates', mode: 'symlink', overwrite: true
