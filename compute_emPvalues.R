@@ -1,5 +1,5 @@
-setwd("/net/fs-2/scale/OrionStore/Scratch/ngda/paper1/nf-rasqual/results_rasqual_permutaion")
-rasqual_result = "/net/fs-2/scale/OrionStore/Scratch/ngda/paper1/nf-rasqual/results_rasqual/all_chromosome_rasqual_lead_snp.txt"
+setwd("/net/fs-2/scale/OrionStore/Scratch/ngda/nf-rasqual/results_rasqual_permutaion")
+rasqual_result = "/net/fs-2/scale/OrionStore/Scratch/ngda/nf-rasqual/results_rasqual/all_chromosome_rasqual_lead_snp.txt"
 
 require(data.table)
 require(qvalue)

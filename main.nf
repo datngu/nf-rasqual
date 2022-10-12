@@ -92,6 +92,7 @@ workflow {
 
         ATAC_MERGE_rasqual(chrom_list_ch.max(), ATAC_RUN_rasqual.out.collect())
         ATAC_MERGE_rasqual_permutation(chrom_list_ch.max(), ATAC_RUN_rasqual_permutation.out.collect())
+        ATAC_COMPUTE_rasqual_emperical_pvalues(ATAC_MERGE_rasqual.collect(), ATAC_MERGE_rasqual_permutation.collect())
     }
 
     if( params.eqtl_qtl ){
@@ -408,3 +409,24 @@ process ATAC_MERGE_rasqual_permutation {
     """
 }
 
+
+
+process ATAC_COMPUTE_rasqual_emperical_pvalues {
+    container 'ndatth/rasqual:v0.0.0'
+    publishDir 'ATAC_results_emperical_pvalues', mode: 'symlink', overwrite: true
+    memory '8 GB'
+    cpus 1
+
+    input:
+    path merged_results
+    path permuation_merged_results
+
+    output:
+    path("rasqual_emperical_pvalues.txt")
+
+
+    script:
+    """
+    rasqual_emperical_pvalues.R rasqual_emperical_pvalues.txt $merged_results $permuation_merged_results
+    """
+}
