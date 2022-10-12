@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --ntasks=1
 #SBATCH --nodes=1                
-#SBATCH --job-name=nf-rasqual   
+#SBATCH --job-name=caQTL   
 #SBATCH --mem=4G                
 #SBATCH --partition=smallmem     
 #SBATCH --mail-user=nguyen.thanh.dat@nmbu.no
