@@ -92,7 +92,7 @@ workflow {
 
         ATAC_MERGE_rasqual(chrom_list_ch.max(), ATAC_RUN_rasqual.out.collect())
         ATAC_MERGE_rasqual_permutation(chrom_list_ch.max(), ATAC_RUN_rasqual_permutation.out.collect())
-        ATAC_COMPUTE_rasqual_emperical_pvalues(ATAC_MERGE_rasqual.collect(), ATAC_MERGE_rasqual_permutation.collect())
+        ATAC_COMPUTE_rasqual_emperical_pvalues(ATAC_MERGE_rasqual.out.collect(), ATAC_MERGE_rasqual_permutation.out.collect())
     }
 
     if( params.eqtl_qtl ){
