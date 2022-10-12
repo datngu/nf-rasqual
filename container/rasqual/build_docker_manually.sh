@@ -93,6 +93,7 @@ R -e 'install.packages("urlchecker")'
 R -e 'install.packages("devtools")'
 R -e 'source("https://bioconductor.org/biocLite.R"); biocLite("GenomicRanges"); biocLite("Rsamtools")'
 R -e 'source("https://bioconductor.org/biocLite.R"); biocLite("GenomicFeatures"); biocLite("Biostrings")'
+R -e 'source("https://bioconductor.org/biocLite.R"); biocLite("qvalue")'
 
 R -e 'devtools::install_github("kauralasoo/rasqual/rasqualTools")'
 # install data.table
