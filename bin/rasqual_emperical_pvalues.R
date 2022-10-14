@@ -43,7 +43,7 @@ get_chi_square <- function(rasqual_res_path){
 
 
 df = fread(rasqual_result, header = F, fill = T)
-df = as.data.frame(df)
+#df = as.data.frame(df)
 res_cq = df[,c(1,2)]
 colnames(res_cq) = c("feature_id", "snp_id")
 res_cq$chi_square = df$V11
@@ -57,7 +57,7 @@ res_cq = res_cq[!res_cq$snp_id == "SKIPPED", ]
 
 
 x1 = as.numeric(res_cq[[3]])
-x2 = as.matrix(res_cq[,4:33])
+x2 = as.matrix(res_cq[, -c(1:3)])
 #emp = empPvals(x1, x2, pool = FALSE)
 emp = empPvals(x1, x2, pool = T)
 emp_fdr = qvalue(emp)
