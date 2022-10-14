@@ -43,6 +43,7 @@ get_chi_square <- function(rasqual_res_path){
 
 
 df = fread(rasqual_result, header = F, fill = T)
+df = as.data.frame(df)
 res_cq = df[,c(1,2)]
 colnames(res_cq) = c("feature_id", "snp_id")
 res_cq$chi_square = df$V11

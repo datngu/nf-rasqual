@@ -26,14 +26,10 @@ nextflow run main.nf -resume --atac_bam $atac_bam --atac_count $atac_count --gen
 
 
 ########### debugs
-# singularity build /net/fs-2/scale/OrionStore/Scratch/ngda/paper1/nf-rasqual/work/singularity/ndatth-rasqual-v0.0.0.img docker://ndatth/rasqual:v0.0.0
+# singularity build /mnt/SCRATCH/ngda/nf-rasqual/shared_dir/singularity/ndatth-rasqual-v0.0.0.img docker://ndatth/rasqual:v0.0.0
 
-# singularity run /net/fs-2/scale/OrionStore/Scratch/ngda/paper1/nf-rasqual/work/singularity/ndatth-rasqual-v0.0.0.img
+# singularity run /mnt/SCRATCH/ngda/nf-rasqual/shared_dir/singularity/ndatth-rasqual-v0.0.0.img
 
-
-# singularity build /mnt/SCRATCH/ngda/nf-rasqual/work/singularity/ndatth-rasqual-v0.0.0.img docker://ndatth/rasqual:v0.0.0
-
-singularity run /mnt/SCRATCH/ngda/nf-rasqual/work/singularity/ndatth-rasqual-v0.0.0.img
 
 RASQUALDIR=/rasqual
 /mnt/users/ngda/proj/paper1/nf-rasqual/bin/createASVCF_fixed_path.sh paired_end bam_list.txt processed_all_chrom.vcf.gz out.vcf.gz atac
