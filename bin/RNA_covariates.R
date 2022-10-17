@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 
 options(stringsAsFactors=FALSE)
-syntax='\nUsage:\t./RNA_covariates.R meta_csv salmon_gene_level_count_txt genotype_vcf phenotype_PCs'
+syntax='\nUsage:\t./RNA_covariates.R meta_csv salmon_gene_level_count_filtered_txt genotype_vcf phenotype_PCs'
 
 
 
@@ -20,17 +20,17 @@ phenotype_PCs = as.integer(args[4])
 
 
 
-# ############
-# setwd("/Users/datn/github/nf-rasqual/data")
+# # ############
+# setwd("/mnt/SCRATCH/ngda/nf-rasqual")
 # # input
-#  meta_fn = "meta/brain.csv"
-#  count_fn = "atac_consensus_peak_featureCounts.txt"
-#  geno_fn = "genotype.vcf.gz"
+#  meta_fn = "data/meta/brain.csv"
+#  count_fn = "/mnt/SCRATCH/ngda/nf-rasqual/results/RNA_filtering_expression/rna_gene_level_count_salmon_filtered.txt"
+#  geno_fn = "data/genotype.vcf.gz"
 #  phenotype_PCs = 2
 
 # ############
 # # output:
-#  out_fn = atac.covs_all_chrom.bin - atac.covs_all_chrom.txt
+#  out_fn = rna.covs_all_chrom.bin - rna.covs_all_chrom.txt
 
 require(rasqualTools)
 require(data.table)
@@ -62,7 +62,7 @@ PCA_Covariates <- function(counts, size_factors, n_PCs = 2) {
 
 meta = fread(meta_fn, sep = ",")
 meta = as.data.frame(meta)
-count = fread(count_fn, skip = 1, sep = "\t")
+count = fread(count_fn, header = T, sep = "\t")
 count = as.data.frame(count)
 genotype = fread(geno_fn, skip = "CHROM", sep = "\t")
 genotype = as.data.frame(genotype)
@@ -74,12 +74,13 @@ od = match(geno_id, meta$genotype_id)
 meta = meta[od,]
 rownames(meta) = meta$genotype_id
 
-atac_peaks = paste(count$Geneid, count$Chr, count$Start, count$End, count$Strand, count$Length, sep = ":")
+#atac_peaks = paste(count$Geneid, count$Chr, count$Start, count$End, count$Strand, count$Length, sep = ":")
+gene_id = count$gene_id
 
 ## count maxtrix processing
-count2 = count[,-c(1:6)]
-row.names(count2) = atac_peaks
-count2 = count2[ ,meta$atac_count_id]
+count2 = count[,-c(1:5)]
+row.names(count2) = gene_id
+count2 = count2[ , meta$rna_count_id]
 colnames(count2) = meta$genotype_id
 
 ## size factor with no GC correction
@@ -91,4 +92,4 @@ covs = PCA_Covariates(count2, size_factors, phenotype_PCs)
 covs = cbind(meta[,-c(1:6)], covs)
 
 #fwrite(covs, file = out_fn, sep = "\t")
-saveRasqualMatrices(list(atac = covs), ".", file_suffix = "covs_all_chrom")
+saveRasqualMatrices(list(rna = covs), ".", file_suffix = "covs_all_chrom")

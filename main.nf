@@ -103,6 +103,7 @@ workflow {
         RNA_ADD_AS_vcf(params.genotype, RNA_BAM_rename.out)
         GTF_GENE_INFO_parser(params.annotation)
         RNA_FILTERING_expression(params.rna_count, GTF_GENE_INFO_parser.out)
+        RNA_PROCESS_covariates(params.meta, RNA_FILTERING_expression.out, params.genotype)
         
         //RNA_SPLIT_chromosome(chrom_list_ch, RNA_ADD_AS_vcf.out, params.rna_count )
     }
@@ -244,7 +245,7 @@ process RNA_FILTERING_expression {
 
 // PCA
 
-process ATAC_PROCESS_covariates {
+process ATAC_PROCESS_covariRNA {
     container 'ndatth/rasqual:v0.0.0'
     publishDir "${params.outdir}/ATAC_covariates", mode: 'symlink', overwrite: true
     memory '8 GB'
@@ -271,7 +272,7 @@ process RNA_PROCESS_covariates {
 
     input:
     path meta
-    path rna_count
+    path rna_count_filtered
     path in_vcf
 
     output:
@@ -279,7 +280,7 @@ process RNA_PROCESS_covariates {
 
     script:
     """
-    RNA_covariates.R $meta $rna_count $in_vcf $params.phenotype_PCs
+    RNA_covariates.R $meta $rna_count_filtered $in_vcf $params.phenotype_PCs
     """
 }
 
