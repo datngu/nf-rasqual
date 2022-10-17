@@ -101,7 +101,9 @@ workflow {
         rna_bam_ch = channel.fromPath( params.rna_bam, checkIfExists: true )
         RNA_BAM_rename(params.meta, rna_bam_ch.collect())
         RNA_ADD_AS_vcf(params.genotype, RNA_BAM_rename.out)
-        RNA_FILTERING_expression(params.rna_count)
+        GTF_GENE_INFO_parser(params.annotation)
+        
+        //RNA_FILTERING_expression(params.rna_count)
         
         //RNA_SPLIT_chromosome(chrom_list_ch, RNA_ADD_AS_vcf.out, params.rna_count )
     }
@@ -198,6 +200,25 @@ process RNA_ADD_AS_vcf {
 }
 
 // expression filtering
+
+
+process GTF_GENE_INFO_parser {
+
+    container 'ndatth/rasqual:v0.0.0'
+    publishDir "gene_info", mode: 'symlink', overwrite: true
+    memory '8 GB'
+
+    input:
+    path gtf
+
+    output:
+    path "gene_info.txt"
+
+    script:
+    """
+    gtf_gene_parser.py $gtf gene_info.txt
+    """
+}
 
 
 process RNA_FILTERING_expression {

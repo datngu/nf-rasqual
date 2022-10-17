@@ -1,12 +1,12 @@
 #!/usr/bin/env Rscript
 
 options(stringsAsFactors=FALSE)
-syntax='\nUsage:\t./RNA_filtering.R in_count out_count exp_prop fpkm_cutoff'
+syntax='\nUsage:\t./RNA_filtering.R in_count out_count annotation_gtf exp_prop fpkm_cutoff'
 
 
 args = commandArgs(trailingOnly = TRUE)
 
-if(length(args) < 4 ){
+if(length(args) < 5 ){
   cat("\nInvalid arguments, Program stop! \n")
   cat(syntax)
   quit()
@@ -14,8 +14,9 @@ if(length(args) < 4 ){
 
 in_count = args[1]
 out_fn = args[2]
-exp_prop = as.numeric(args[3])
-fpkm_cutoff = as.numeric(args[4])
+gtf = args[3]
+exp_prop = as.numeric(args[4])
+fpkm_cutoff = as.numeric(args[5])
 
 
 compute_size_factor <- function(counts){
@@ -38,6 +39,7 @@ compute_fpkm <- function(counts){
 }
 
 require(data.table)
+require(GenomicFeatures)
 
 
 # singularity run /mnt/SCRATCH/ngda/nf-rasqual/shared_dir/singularity/ndatth-rasqual-v0.0.0.img
@@ -45,6 +47,7 @@ require(data.table)
 
 # in_count = "/mnt/users/ngda/ngs_data/atlantic_salmon/brain/rna_gene_level_count_salmon.txt"
 # out_fn = "rna_gene_level_count_salmon_filtered.txt"
+# gtf = "/mnt/users/ngda/genomes/atlantic_salmon/Salmo_salar.Ssal_v3.1.106.gtf"
 # exp_prop = 0.5
 # fpkm_cutoff = 0.5
 
@@ -59,5 +62,18 @@ fpkm2 = fpkm > fpkm_cutoff
 pick = rowSums(fpkm2)/ncol(fpkm2) >= exp_prop
 
 count3 = count[pick,]
+
+####### annotation processing
+txdb = makeTxDbFromGFF(gtf)
+k <- keys(txdb, keytype = "GENEID")
+
+#k <- keys(txdb, keytype = "TXNAME")
+genes.exon.all= select(txdb, keys = k, columns=c("GENEID","TXNAME","EXONID","EXONSTART","EXONEND","EXONSTRAND","EXONCHROM"), keytype = "GENEID")
+
+
+
+
+
+
 
 fwrite(count3, file = out_fn, sep = "\t")
