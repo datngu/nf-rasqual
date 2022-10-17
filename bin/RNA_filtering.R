@@ -63,16 +63,6 @@ pick = rowSums(fpkm2)/ncol(fpkm2) >= exp_prop
 
 count3 = count[pick,]
 
-####### annotation processing
-txdb = makeTxDbFromGFF(gtf)
-k <- keys(txdb, keytype = "GENEID")
-
-#k <- keys(txdb, keytype = "TXNAME")
-genes.exon.all= select(txdb, keys = k, columns=c("GENEID","TXNAME","EXONID","EXONSTART","EXONEND","EXONSTRAND","EXONCHROM"), keytype = "GENEID")
-
-
-
-
 
 
 
