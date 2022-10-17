@@ -245,7 +245,7 @@ process RNA_FILTERING_expression {
 
 // PCA
 
-process ATAC_PROCESS_covariRNA {
+process ATAC_PROCESS_covariates {
     container 'ndatth/rasqual:v0.0.0'
     publishDir "${params.outdir}/ATAC_covariates", mode: 'symlink', overwrite: true
     memory '8 GB'
