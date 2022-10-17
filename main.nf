@@ -101,7 +101,7 @@ workflow {
         rna_bam_ch = channel.fromPath( params.rna_bam, checkIfExists: true )
         RNA_BAM_rename(params.meta, rna_bam_ch.collect())
         RNA_ADD_AS_vcf(params.genotype, RNA_BAM_rename.out)
-        RNA_FILTERING_expression(params.rna_count, params.rna_tpm)
+        RNA_FILTERING_expression(params.rna_count)
         
         //RNA_SPLIT_chromosome(chrom_list_ch, RNA_ADD_AS_vcf.out, params.rna_count )
     }
