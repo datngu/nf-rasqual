@@ -112,7 +112,7 @@ workflow {
 
 process ATAC_BAM_rename {
     container 'ndatth/rasqual:v0.0.0'
-    publishDir "ATAC_bam_dir", mode: 'symlink', overwrite: true
+    publishDir "${params.outdir}/ATAC_bam_dir", mode: 'symlink', overwrite: true
     memory '8 GB'
 
     input:
@@ -130,7 +130,7 @@ process ATAC_BAM_rename {
 
 process RNA_BAM_rename {
     container 'ndatth/rasqual:v0.0.0'
-    publishDir "RNA_bam_dir", mode: 'symlink', overwrite: true
+    publishDir "${params.outdir}/RNA_bam_dir", mode: 'symlink', overwrite: true
     memory '8 GB'
 
     input:
@@ -153,7 +153,7 @@ process RNA_BAM_rename {
 
 process ATAC_ADD_AS_vcf {
     container 'ndatth/rasqual:v0.0.0'
-    publishDir "ATAC_AS_vcf", mode: 'symlink', overwrite: true
+    publishDir "${params.outdir}/ATAC_AS_vcf", mode: 'symlink', overwrite: true
     memory '8 GB'
 
     input:
@@ -177,7 +177,7 @@ process ATAC_ADD_AS_vcf {
 
 process RNA_ADD_AS_vcf {
     container 'ndatth/rasqual:v0.0.0'
-    publishDir "RNA_AS_vcf", mode: 'symlink', overwrite: true
+    publishDir "${params.outdir}/RNA_AS_vcf", mode: 'symlink', overwrite: true
     memory '8 GB'
 
     input:
@@ -204,7 +204,7 @@ process RNA_ADD_AS_vcf {
 process GTF_GENE_INFO_parser {
 
     container 'ndatth/rasqual:v0.0.0'
-    publishDir "gene_info", mode: 'symlink', overwrite: true
+    publishDir "${params.outdir}/gene_info", mode: 'symlink', overwrite: true
     memory '8 GB'
 
     input:
@@ -223,7 +223,7 @@ process GTF_GENE_INFO_parser {
 process RNA_FILTERING_expression {
 
     container 'ndatth/rasqual:v0.0.0'
-    publishDir "RNA_filtering_expression", mode: 'symlink', overwrite: true
+    publishDir "${params.outdir}/RNA_filtering_expression", mode: 'symlink', overwrite: true
     memory '8 GB'
 
     input:
@@ -246,7 +246,7 @@ process RNA_FILTERING_expression {
 
 process ATAC_PROCESS_covariates {
     container 'ndatth/rasqual:v0.0.0'
-    publishDir "ATAC_covariates", mode: 'symlink', overwrite: true
+    publishDir "${params.outdir}/ATAC_covariates", mode: 'symlink', overwrite: true
     memory '8 GB'
 
     input:
@@ -266,7 +266,7 @@ process ATAC_PROCESS_covariates {
 
 process RNA_PROCESS_covariates {
     container 'ndatth/rasqual:v0.0.0'
-    publishDir "RNA_covariates", mode: 'symlink', overwrite: true
+    publishDir "${params.outdir}/RNA_covariates", mode: 'symlink', overwrite: true
     memory '8 GB'
 
     input:
@@ -289,7 +289,7 @@ process RNA_PROCESS_covariates {
 
 process ATAC_SPLIT_chromosome {
     container 'ndatth/rasqual:v0.0.0'
-    publishDir "ATAC_split_chrom", mode: 'symlink', overwrite: true
+    publishDir "${params.outdir}/ATAC_split_chrom", mode: 'symlink', overwrite: true
     memory '8 GB'
 
     input:
@@ -314,7 +314,7 @@ process ATAC_SPLIT_chromosome {
 
 process RNA_SPLIT_chromosome {
     container 'ndatth/rasqual:v0.0.0'
-    publishDir "RNA_split_chrom", mode: 'symlink', overwrite: true
+    publishDir "${params.outdir}/RNA_split_chrom", mode: 'symlink', overwrite: true
     memory '8 GB'
 
     input:
@@ -349,7 +349,7 @@ process RNA_SPLIT_chromosome {
 
 process ATAC_PREPROCESS_rasqual {
     container 'ndatth/rasqual:v0.0.0'
-    publishDir "ATAC_qtl_input", mode: 'symlink', overwrite: true
+    publishDir "${params.outdir}/ATAC_qtl_input", mode: 'symlink', overwrite: true
     memory '64 GB'
     cpus 8
 
@@ -382,7 +382,7 @@ process ATAC_PREPROCESS_rasqual {
 
 process ATAC_RUN_rasqual {
     container 'ndatth/rasqual:v0.0.0'
-    publishDir "ATAC_results_rasqual", mode: 'symlink', overwrite: true
+    publishDir "${params.outdir}/ATAC_results_rasqual", mode: 'symlink', overwrite: true
     memory '64 GB'
     cpus 16
 
@@ -405,7 +405,7 @@ process ATAC_RUN_rasqual {
 
 process ATAC_MERGE_rasqual {
     container 'ndatth/rasqual:v0.0.0'
-    publishDir "ATAC_results_rasqual", mode: 'symlink', overwrite: true
+    publishDir "${params.outdir}/ATAC_results_rasqual", mode: 'symlink', overwrite: true
     memory '8 GB'
     cpus 1
 
@@ -429,7 +429,7 @@ process ATAC_MERGE_rasqual {
 
 process ATAC_RUN_rasqual_permutation {
     container 'ndatth/rasqual:v0.0.0'
-    publishDir "ATAC_results_rasqual_permutaion", mode: 'symlink', overwrite: true
+    publishDir "${params.outdir}/ATAC_results_rasqual_permutaion", mode: 'symlink', overwrite: true
     memory '64 GB'
     cpus 16
 
@@ -452,7 +452,7 @@ process ATAC_RUN_rasqual_permutation {
 
 process ATAC_MERGE_rasqual_permutation {
     container 'ndatth/rasqual:v0.0.0'
-    publishDir "ATAC_results_rasqual_permutaion", mode: 'symlink', overwrite: true
+    publishDir "${params.outdir}/ATAC_results_rasqual_permutaion", mode: 'symlink', overwrite: true
     memory '8 GB'
     cpus 1
 
@@ -480,7 +480,7 @@ process ATAC_MERGE_rasqual_permutation {
 
 process ATAC_COMPUTE_rasqual_emperical_pvalues {
     container 'ndatth/rasqual:v0.0.0'
-    publishDir "ATAC_results_emperical_pvalues", mode: 'symlink', overwrite: true
+    publishDir "${params.outdir}/ATAC_results_emperical_pvalues", mode: 'symlink', overwrite: true
     memory '8 GB'
     cpus 1
 
