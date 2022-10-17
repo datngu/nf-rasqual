@@ -391,17 +391,17 @@ process RNA_PREPROCESS_rasqual {
     path genome
 
     output:
-    tuple path("${chr}_RNA.exp.bin"), path("${chr}_RNA.exp.txt"), path("${chr}_RNA.size_factors.bin"), path("${chr}_RNA.size_factors.txt"), path("${chr}_snp_counts.tsv")
+    tuple path("${chr}_rna.exp.bin"), path("${chr}_rna.exp.txt"), path("${chr}_rna.size_factors.bin"), path("${chr}_rna.size_factors.txt"), path("${chr}_snp_counts.tsv")
 
 
     script:
     """
     RNA_rasqual_processor.R ${meta} ${chr}_count.txt ${chr}.vcf.gz $genome $params.eqtl_window ${task.cpus}
     ## rename files
-    mv RNA.exp.bin ${chr}_RNA.exp.bin
-    mv RNA.exp.txt ${chr}_RNA.exp.txt
-    mv RNA.size_factors.bin ${chr}_RNA.size_factors.bin
-    mv RNA.size_factors.txt ${chr}_RNA.size_factors.txt
+    mv rna.exp.bin ${chr}_rna.exp.bin
+    mv rna.exp.txt ${chr}_rna.exp.txt
+    mv rna.size_factors.bin ${chr}_rna.size_factors.bin
+    mv rna.size_factors.txt ${chr}_rna.size_factors.txt
     mv snp_counts.tsv ${chr}_snp_counts.tsv
     """
 }
