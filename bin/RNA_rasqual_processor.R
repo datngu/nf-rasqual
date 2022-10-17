@@ -81,6 +81,17 @@ get_GC <- function(genome, feature_info){
   return(gc)
 }
 
+# HANDLING UNKNOWN ERROR WHEN COMPUTE OFFSETS
+get_offset <- function(count2, GC) {
+  x = try(rasqualCalculateSampleOffsets(count2, GC))
+  if(class(x) == "matrix"){
+    res = x
+  }else{
+    res = rasqualCalculateSampleOffsets(count2, gc_correct = FALSE)
+  }
+  return(res)
+}
+
 
 meta = fread(meta_fn, sep = ",")
 meta = as.data.frame(meta)
@@ -138,20 +149,6 @@ gc = get_GC(genome, gene_info)
 # # fix inf values
 # pick = gc > 0 & gc <1
 # gc[!pick] = 0.5
-
-
-# HANDLING UNKNOWN ERROR WHEN COMPUTE OFFSETS
-get_offset <- function(count2, GC) {
-  x = try(rasqualCalculateSampleOffsets(count2, GC))
-  if(class(x) == "matrix"){
-    res = x
-  }else{
-    res = rasqualCalculateSampleOffsets(count2, gc_correct = FALSE)
-  }
-  return(res)
-}
-
-
 
 gc_percentage = gc*100
 GC = data.frame(gene_id = row.names(count2), percentage_gc_content = gc_percentage)
