@@ -159,9 +159,8 @@ GC = data.frame(gene_id = row.names(count2), percentage_gc_content = gc_percenta
 size_factors = get_offset(count2, GC)
 
 # size_factors = rasqualCalculateSampleOffsets(count2, gc_correct = FALSE)
-# size_factors = try(rasqualCalculateSampleOffsets(count2, GC))
+# size_factors = rasqualCalculateSampleOffsets(count2, GC)
 
-#size_factors = rasqualCalculateSampleOffsets(count2, GC)
 saveRasqualMatrices(list(rna = size_factors), ".", file_suffix = "size_factors")
 
 
