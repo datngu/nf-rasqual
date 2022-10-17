@@ -129,7 +129,7 @@ count2 = count[,-c(1:5)]
 row.names(count2) = gene_id
 count2 = count2[ ,meta$rna_count_id]
 colnames(count2) = meta$genotype_id
-saveRasqualMatrices(list( atac = count2), ".", file_suffix = "exp")
+saveRasqualMatrices(list( rna = count2), ".", file_suffix = "exp")
 
 ## size factor
 # GC counting
