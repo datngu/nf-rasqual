@@ -14,7 +14,7 @@ if(length(args) < 5 ){
 }
 
 in_count = args[1]
-in_tpm = args[1]
+in_tpm = args[2]
 out_fn = args[3]
 exp_prop = as.integer(args[4])
 tpm_cutoff = as.integer(args[5])
