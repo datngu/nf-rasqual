@@ -104,8 +104,7 @@ workflow {
         GTF_GENE_INFO_parser(params.annotation)
         RNA_FILTERING_expression(params.rna_count, GTF_GENE_INFO_parser.out)
         RNA_PROCESS_covariates(params.meta, RNA_FILTERING_expression.out, params.genotype)
-        
-        //RNA_SPLIT_chromosome(chrom_list_ch, RNA_ADD_AS_vcf.out, params.rna_count )
+        RNA_SPLIT_chromosome(chrom_list_ch, RNA_ADD_AS_vcf.out, RNA_FILTERING_expression.out )
     }
 }
 
