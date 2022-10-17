@@ -34,6 +34,7 @@ params.chrom           = 1..29
 params.permute         = 20
 params.phenotype_PCs   = 2 
 params.exp_prop        = 0.5
+params.tpm_cutoff      = 0.5
 params.maf             = 0.05
 params.fdr             = 0.1
 params.atac_window     = 10000
@@ -56,6 +57,7 @@ log.info """\
     rna_bam             : $params.rna_bam
     rna_count           : $params.rna_count
     rna_tpm             : $params.rna_tpm
+    tpm_cutoff          : $params.tpm_cutoff
     genotype            : $params.genotype 
     meta                : $params.meta
     outdir              : $params.outdir
@@ -215,7 +217,7 @@ process RNA_FILTERING_expression {
 
     script:
     """
-    RNA_filtering.R $rna_count $rna_tpm rna_gene_level_count_salmon_filtered.txt $params.exp_prop
+    RNA_filtering.R $rna_count $rna_tpm rna_gene_level_count_salmon_filtered.txt $params.exp_prop $params.tpm_cutoff
     """
 }
 
