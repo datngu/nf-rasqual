@@ -39,7 +39,7 @@ cpu = as.integer(cpu)
 # # input
 #  cis_window = 10000
 #  meta_fn = "data/meta/brain.csv"
-#  count_fn = "/mnt/SCRATCH/ngda/nf-rasqual/results/RNA_split_chrom/29_count.txt"
+#  count_fn = "/mnt/SCRATCH/ngda/nf-rasqual/results/RNA_split_chrom/8_count.txt"
 #  geno_fn = "data/genotype.vcf.gz"
 #  genome_fn = "/mnt/users/ngda/genomes/atlantic_salmon/Salmo_salar.Ssal_v3.1.dna_sm.toplevel.fa"
 
@@ -135,14 +135,33 @@ saveRasqualMatrices(list( atac = count2), ".", file_suffix = "exp")
 # GC counting
 gc = get_GC(genome, gene_info)
 
-# fix inf values
-pick = gc > 0 & gc <1
-gc[!pick] = 0.5
+# # fix inf values
+# pick = gc > 0 & gc <1
+# gc[!pick] = 0.5
+
+
+# HANDLING UNKNOWN ERROR WHEN COMPUTE OFFSETS
+get_offset <- function(count2, GC) {
+  x = try(rasqualCalculateSampleOffsets(count2, GC))
+  if(class(x) == "matrix"){
+    res = x
+  }else{
+    res = rasqualCalculateSampleOffsets(count2, gc_correct = FALSE)
+  }
+  return(res)
+}
+
+
 
 gc_percentage = gc*100
 GC = data.frame(gene_id = row.names(count2), percentage_gc_content = gc_percentage)
 # comput size factors
-size_factors = rasqualCalculateSampleOffsets(count2, GC)
+size_factors = get_offset(count2, GC)
+
+# size_factors = rasqualCalculateSampleOffsets(count2, gc_correct = FALSE)
+# size_factors = try(rasqualCalculateSampleOffsets(count2, GC))
+
+#size_factors = rasqualCalculateSampleOffsets(count2, GC)
 saveRasqualMatrices(list(rna = size_factors), ".", file_suffix = "size_factors")
 
 
