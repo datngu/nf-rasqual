@@ -102,8 +102,7 @@ workflow {
         RNA_BAM_rename(params.meta, rna_bam_ch.collect())
         RNA_ADD_AS_vcf(params.genotype, RNA_BAM_rename.out)
         GTF_GENE_INFO_parser(params.annotation)
-        
-        //RNA_FILTERING_expression(params.rna_count)
+        RNA_FILTERING_expression(params.rna_count, GTF_GENE_INFO_parser.out)
         
         //RNA_SPLIT_chromosome(chrom_list_ch, RNA_ADD_AS_vcf.out, params.rna_count )
     }
@@ -229,13 +228,14 @@ process RNA_FILTERING_expression {
 
     input:
     path rna_count
+    path gene_info
 
     output:
     path "rna_gene_level_count_salmon_filtered.txt"
 
     script:
     """
-    RNA_filtering.R $rna_count rna_gene_level_count_salmon_filtered.txt $params.exp_prop $params.fpkm_cutoff
+    RNA_filtering.R $rna_count rna_gene_level_count_salmon_filtered.txt $gene_info $params.exp_prop $params.fpkm_cutoff
     """
 }
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 
 options(stringsAsFactors=FALSE)
-syntax='\nUsage:\t./RNA_filtering.R in_count out_count annotation_gtf exp_prop fpkm_cutoff'
+syntax='\nUsage:\t./RNA_filtering.R in_count out_count gene_info exp_prop fpkm_cutoff'
 
 
 args = commandArgs(trailingOnly = TRUE)
@@ -14,7 +14,7 @@ if(length(args) < 5 ){
 
 in_count = args[1]
 out_fn = args[2]
-gtf = args[3]
+gene_info = args[3]
 exp_prop = as.numeric(args[4])
 fpkm_cutoff = as.numeric(args[5])
 
@@ -39,15 +39,13 @@ compute_fpkm <- function(counts){
 }
 
 require(data.table)
-require(GenomicFeatures)
-
 
 # singularity run /mnt/SCRATCH/ngda/nf-rasqual/shared_dir/singularity/ndatth-rasqual-v0.0.0.img
 
 
 # in_count = "/mnt/users/ngda/ngs_data/atlantic_salmon/brain/rna_gene_level_count_salmon.txt"
 # out_fn = "rna_gene_level_count_salmon_filtered.txt"
-# gtf = "/mnt/users/ngda/genomes/atlantic_salmon/Salmo_salar.Ssal_v3.1.106.gtf"
+# gene_info = "/mnt/SCRATCH/ngda/nf-rasqual/gene_info/gene_info.txt"
 # exp_prop = 0.5
 # fpkm_cutoff = 0.5
 
@@ -62,8 +60,13 @@ fpkm2 = fpkm > fpkm_cutoff
 pick = rowSums(fpkm2)/ncol(fpkm2) >= exp_prop
 
 count3 = count[pick,]
+count3 = count3[,-2]
+
+info = fread(gene_info, header = F)
+names(info) = c("gene_id", "chr", "strand", "exon_starts", "exon_ends")
+info = info[info$gene_id %in% count3$gene_id,]
+
+res = merge(info, count3, by.x ="gene_id", by.y ="gene_id")
 
 
-
-
-fwrite(count3, file = out_fn, sep = "\t")
+fwrite(res, file = out_fn, sep = "\t")
