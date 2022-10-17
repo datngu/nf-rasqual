@@ -24,7 +24,6 @@ params.atac_bam        = "$baseDir/data/atac_bam/*.bam"
 params.atac_count      = "$baseDir/data/atac_consensus_peak_featureCounts.txt"
 params.rna_bam         = "$baseDir/data/rna_bam/*.bam"
 params.rna_count       = "$baseDir/data/rna_gene_level_count_salmon.txt"
-params.rna_tpm         = "$baseDir/data/rna_gene_level_tpm_salmon.txt"
 params.genotype        = "$baseDir/data/genotype.vcf.gz"
 params.meta            = "$baseDir/data/meta/brain.csv"
 params.outdir          = "results"
@@ -34,7 +33,7 @@ params.chrom           = 1..29
 params.permute         = 20
 params.phenotype_PCs   = 2 
 params.exp_prop        = 0.5
-params.tpm_cutoff      = 0.5
+params.fpkm_cutoff     = 0.5
 params.maf             = 0.05
 params.fdr             = 0.1
 params.atac_window     = 10000
@@ -56,8 +55,7 @@ log.info """\
     atac_count          : $params.atac_count
     rna_bam             : $params.rna_bam
     rna_count           : $params.rna_count
-    rna_tpm             : $params.rna_tpm
-    tpm_cutoff          : $params.tpm_cutoff
+    fpkm_cutoff         : $params.fpkm_cutoff
     genotype            : $params.genotype 
     meta                : $params.meta
     outdir              : $params.outdir
@@ -210,14 +208,13 @@ process RNA_FILTERING_expression {
 
     input:
     path rna_count
-    path rna_tpm
 
     output:
     path "rna_gene_level_count_salmon_filtered.txt"
 
     script:
     """
-    RNA_filtering.R $rna_count $rna_tpm rna_gene_level_count_salmon_filtered.txt $params.exp_prop $params.tpm_cutoff
+    RNA_filtering.R $rna_count rna_gene_level_count_salmon_filtered.txt $params.exp_prop $params.fpkm_cutoff
     """
 }
 

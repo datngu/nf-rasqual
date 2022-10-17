@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 
 options(stringsAsFactors=FALSE)
-syntax='\nUsage:\t./RNA_covariates.R meta_csv feature_count_txt genotype_vcf phenotype_PCs'
+syntax='\nUsage:\t./RNA_covariates.R meta_csv salmon_gene_level_count_txt genotype_vcf phenotype_PCs'
 
 
 
