@@ -24,6 +24,7 @@ params.atac_bam        = "$baseDir/data/atac_bam/*.bam"
 params.atac_count      = "$baseDir/data/atac_consensus_peak_featureCounts.txt"
 params.rna_bam         = "$baseDir/data/rna_bam/*.bam"
 params.rna_count       = "$baseDir/data/rna_gene_level_count_salmon.txt"
+params.rna_tpm         = "$baseDir/data/rna_gene_level_tpm_salmon.txt"
 params.genotype        = "$baseDir/data/genotype.vcf.gz"
 params.meta            = "$baseDir/data/meta/brain.csv"
 params.outdir          = "results"
@@ -54,6 +55,7 @@ log.info """\
     atac_count          : $params.atac_count
     rna_bam             : $params.rna_bam
     rna_count           : $params.rna_count
+    rna_tpm             : $params.rna_tpm
     genotype            : $params.genotype 
     meta                : $params.meta
     outdir              : $params.outdir
@@ -99,7 +101,9 @@ workflow {
         rna_bam_ch = channel.fromPath( params.rna_bam, checkIfExists: true )
         RNA_BAM_rename(params.meta, rna_bam_ch.collect())
         RNA_ADD_AS_vcf(params.genotype, RNA_BAM_rename.out)
-        RNA_SPLIT_chromosome(chrom_list_ch, RNA_ADD_AS_vcf.out, params.rna_count )
+        RNA_FILTERING_expression(params.rna_count, params.rna_tpm)
+        
+        //RNA_SPLIT_chromosome(chrom_list_ch, RNA_ADD_AS_vcf.out, params.rna_count )
     }
 }
 
@@ -107,7 +111,7 @@ workflow {
 
 process ATAC_BAM_rename {
     container 'ndatth/rasqual:v0.0.0'
-    publishDir 'ATAC_bam_dir', mode: 'symlink', overwrite: true
+    publishDir "ATAC_bam_dir", mode: 'symlink', overwrite: true
     memory '8 GB'
 
     input:
@@ -125,7 +129,7 @@ process ATAC_BAM_rename {
 
 process RNA_BAM_rename {
     container 'ndatth/rasqual:v0.0.0'
-    publishDir 'RNA_bam_dir', mode: 'symlink', overwrite: true
+    publishDir "RNA_bam_dir", mode: 'symlink', overwrite: true
     memory '8 GB'
 
     input:
@@ -148,7 +152,7 @@ process RNA_BAM_rename {
 
 process ATAC_ADD_AS_vcf {
     container 'ndatth/rasqual:v0.0.0'
-    publishDir 'ATAC_AS_vcf', mode: 'symlink', overwrite: true
+    publishDir "ATAC_AS_vcf", mode: 'symlink', overwrite: true
     memory '8 GB'
 
     input:
@@ -172,7 +176,7 @@ process ATAC_ADD_AS_vcf {
 
 process RNA_ADD_AS_vcf {
     container 'ndatth/rasqual:v0.0.0'
-    publishDir 'RNA_AS_vcf', mode: 'symlink', overwrite: true
+    publishDir "RNA_AS_vcf", mode: 'symlink', overwrite: true
     memory '8 GB'
 
     input:
@@ -193,13 +197,36 @@ process RNA_ADD_AS_vcf {
     """
 }
 
+// expression filtering
+
+
+process RNA_FILTERING_expression {
+
+    container 'ndatth/rasqual:v0.0.0'
+    publishDir "RNA_filtering", mode: 'symlink', overwrite: true
+    memory '8 GB'
+
+    input:
+    path rna_count
+    path rna_tpm
+
+    output:
+    path "rna_gene_level_count_salmon_filtered.txt"
+
+    script:
+    """
+    RNA_filtering.R $rna_count $rna_tpm rna_gene_level_count_salmon_filtered.txt $params.exp_prop
+    """
+}
+
+
 
 
 // PCA
 
 process ATAC_PROCESS_covariates {
     container 'ndatth/rasqual:v0.0.0'
-    publishDir 'ATAC_covariates', mode: 'symlink', overwrite: true
+    publishDir "ATAC_covariates", mode: 'symlink', overwrite: true
     memory '8 GB'
 
     input:
@@ -217,12 +244,32 @@ process ATAC_PROCESS_covariates {
 }
 
 
+process RNA_PROCESS_covariates {
+    container 'ndatth/rasqual:v0.0.0'
+    publishDir "RNA_covariates", mode: 'symlink', overwrite: true
+    memory '8 GB'
+
+    input:
+    path meta
+    path rna_count
+    path in_vcf
+
+    output:
+    tuple path("rna.covs_all_chrom.bin"), path("rna.covs_all_chrom.txt")
+
+    script:
+    """
+    RNA_covariates.R $meta $rna_count $in_vcf $params.phenotype_PCs
+    """
+}
+
+
 
 // slipt chomosome
 
 process ATAC_SPLIT_chromosome {
     container 'ndatth/rasqual:v0.0.0'
-    publishDir 'ATAC_split_chrom', mode: 'symlink', overwrite: true
+    publishDir "ATAC_split_chrom", mode: 'symlink', overwrite: true
     memory '8 GB'
 
     input:
@@ -247,7 +294,7 @@ process ATAC_SPLIT_chromosome {
 
 process RNA_SPLIT_chromosome {
     container 'ndatth/rasqual:v0.0.0'
-    publishDir 'RNA_split_chrom', mode: 'symlink', overwrite: true
+    publishDir "RNA_split_chrom", mode: 'symlink', overwrite: true
     memory '8 GB'
 
     input:
@@ -282,7 +329,7 @@ process RNA_SPLIT_chromosome {
 
 process ATAC_PREPROCESS_rasqual {
     container 'ndatth/rasqual:v0.0.0'
-    publishDir 'ATAC_qtl_input', mode: 'symlink', overwrite: true
+    publishDir "ATAC_qtl_input", mode: 'symlink', overwrite: true
     memory '64 GB'
     cpus 8
 
@@ -315,7 +362,7 @@ process ATAC_PREPROCESS_rasqual {
 
 process ATAC_RUN_rasqual {
     container 'ndatth/rasqual:v0.0.0'
-    publishDir 'ATAC_results_rasqual', mode: 'symlink', overwrite: true
+    publishDir "ATAC_results_rasqual", mode: 'symlink', overwrite: true
     memory '64 GB'
     cpus 16
 
@@ -338,7 +385,7 @@ process ATAC_RUN_rasqual {
 
 process ATAC_MERGE_rasqual {
     container 'ndatth/rasqual:v0.0.0'
-    publishDir 'ATAC_results_rasqual', mode: 'symlink', overwrite: true
+    publishDir "ATAC_results_rasqual", mode: 'symlink', overwrite: true
     memory '8 GB'
     cpus 1
 
@@ -362,7 +409,7 @@ process ATAC_MERGE_rasqual {
 
 process ATAC_RUN_rasqual_permutation {
     container 'ndatth/rasqual:v0.0.0'
-    publishDir 'ATAC_results_rasqual_permutaion', mode: 'symlink', overwrite: true
+    publishDir "ATAC_results_rasqual_permutaion", mode: 'symlink', overwrite: true
     memory '64 GB'
     cpus 16
 
@@ -385,7 +432,7 @@ process ATAC_RUN_rasqual_permutation {
 
 process ATAC_MERGE_rasqual_permutation {
     container 'ndatth/rasqual:v0.0.0'
-    publishDir 'ATAC_results_rasqual_permutaion', mode: 'symlink', overwrite: true
+    publishDir "ATAC_results_rasqual_permutaion", mode: 'symlink', overwrite: true
     memory '8 GB'
     cpus 1
 
@@ -413,7 +460,7 @@ process ATAC_MERGE_rasqual_permutation {
 
 process ATAC_COMPUTE_rasqual_emperical_pvalues {
     container 'ndatth/rasqual:v0.0.0'
-    publishDir 'ATAC_results_emperical_pvalues', mode: 'symlink', overwrite: true
+    publishDir "ATAC_results_emperical_pvalues", mode: 'symlink', overwrite: true
     memory '8 GB'
     cpus 1
 

@@ -30,6 +30,10 @@ cp /mnt/project/Aqua-Faang/seq_results/AtlanticSalmon/BodyMap/ATAC/Brain/results
 
 cp /mnt/project/Aqua-Faang/seq_results/AtlanticSalmon/BodyMap/RNA/Brain/results/star_salmon/salmon.merged.gene_counts.tsv ${home_dir}/rna_gene_level_count_salmon.txt
 
+
+cp /mnt/project/Aqua-Faang/seq_results/AtlanticSalmon/BodyMap/RNA/Brain/results/star_salmon/salmon.merged.gene_tpm.tsv ${home_dir}/rna_gene_level_tpm_salmon.txt
+
+
 ## ATAC_seq
 mkdir ${home_dir}/atac_bam
 
