@@ -37,7 +37,7 @@ params.fpkm_cutoff     = 0.5
 params.maf             = 0.05
 params.fdr             = 0.1
 params.atac_window     = 10000
-params.eqtl_window     = 500000
+params.eqtl_window     = 10000
 
 // pipeline options
 params.atac_qtl          = true
@@ -396,7 +396,7 @@ process RNA_PREPROCESS_rasqual {
 
     script:
     """
-    RNA_rasqual_processor.R ${meta} ${chr}_count.txt ${chr}.vcf.gz $genome $params.RNA_window ${task.cpus}
+    RNA_rasqual_processor.R ${meta} ${chr}_count.txt ${chr}.vcf.gz $genome $params.eqtl_window ${task.cpus}
     ## rename files
     mv RNA.exp.bin ${chr}_RNA.exp.bin
     mv RNA.exp.txt ${chr}_RNA.exp.txt
