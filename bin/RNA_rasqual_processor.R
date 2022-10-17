@@ -140,9 +140,6 @@ GC = data.frame(gene_id = row.names(count2), percentage_gc_content = gc_percenta
 size_factors = rasqualCalculateSampleOffsets(count2, GC)
 saveRasqualMatrices(list(rna = size_factors), ".", file_suffix = "size_factors")
 
-# ## covariates
-# covs = PCA_Covariates(count2, size_factors, phenotype_PCs)
-# covs = cbind(meta[,-c(1:6)], covs)
-# saveRasqualMatrices(list(atac = covs), ".", file_suffix = "covs")
+
 
 
