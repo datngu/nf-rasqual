@@ -134,6 +134,11 @@ saveRasqualMatrices(list( atac = count2), ".", file_suffix = "exp")
 ## size factor
 # GC counting
 gc = get_GC(genome, gene_info)
+
+# fix inf values
+pick = gc > 0 & gc <1
+gc[!pick] = 0.5
+
 gc_percentage = gc*100
 GC = data.frame(gene_id = row.names(count2), percentage_gc_content = gc_percentage)
 # comput size factors
