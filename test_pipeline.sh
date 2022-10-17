@@ -3,6 +3,7 @@
 #SBATCH --nodes=1                
 #SBATCH --job-name=caQTL   
 #SBATCH --mem=4G                
+#SBATCH --partition=orion
 #SBATCH --constraint=AVX2
 #SBATCH --mail-user=nguyen.thanh.dat@nmbu.no
 #SBATCH --mail-type=ALL
