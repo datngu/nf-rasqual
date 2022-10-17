@@ -30,7 +30,6 @@ atac_count=/mnt/users/ngda/ngs_data/atlantic_salmon/brain/atac_consensus_peak_fe
 # RNA input
 rna_bam=/mnt/users/ngda/ngs_data/atlantic_salmon/brain/rna_bam/*{.bam,.bai}
 rna_count=/mnt/users/ngda/ngs_data/atlantic_salmon/brain/rna_gene_level_count_salmon.txt
-rna_tpm=/mnt/users/ngda/ngs_data/atlantic_salmon/brain/rna_gene_level_tpm_salmon.txt
 
 # SNP genotype input - phased - added GP
 genotype=/mnt/users/ngda/ngs_data/atlantic_salmon/wgs/processed_all_chrom.vcf.gz
@@ -39,4 +38,4 @@ genotype=/mnt/users/ngda/ngs_data/atlantic_salmon/wgs/processed_all_chrom.vcf.gz
 outdir=results
 
 ##
-nextflow run main.nf -resume -w /mnt/SCRATCH/ngda/nf-rasqual/shared_dir --genome $genome --annotation $annotation --atac_bam $atac_bam --atac_count $atac_count --rna_bam $rna_bam --rna_count $rna_count --rna_tpm $rna_tpm --genotype $genotype --outdir $outdir
+nextflow run main.nf -resume -w /mnt/SCRATCH/ngda/nf-rasqual/shared_dir --genome $genome --annotation $annotation --atac_bam $atac_bam --atac_count $atac_count --rna_bam $rna_bam --rna_count $rna_count --genotype $genotype --outdir $outdir
