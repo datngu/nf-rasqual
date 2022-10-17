@@ -203,7 +203,7 @@ process RNA_ADD_AS_vcf {
 process RNA_FILTERING_expression {
 
     container 'ndatth/rasqual:v0.0.0'
-    publishDir "RNA_filtering", mode: 'symlink', overwrite: true
+    publishDir "RNA_filtering_expression", mode: 'symlink', overwrite: true
     memory '8 GB'
 
     input:
