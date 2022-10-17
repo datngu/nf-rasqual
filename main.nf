@@ -105,6 +105,7 @@ workflow {
         RNA_FILTERING_expression(params.rna_count, GTF_GENE_INFO_parser.out)
         RNA_PROCESS_covariates(params.meta, RNA_FILTERING_expression.out, params.genotype)
         RNA_SPLIT_chromosome(chrom_list_ch, RNA_ADD_AS_vcf.out, RNA_FILTERING_expression.out )
+        RNA_PREPROCESS_rasqual(chrom_list_ch, params.meta, RNA_SPLIT_chromosome.out.collect(), params.genome)
     }
 }
 
@@ -377,8 +378,37 @@ process ATAC_PREPROCESS_rasqual {
 
 
 
+process RNA_PREPROCESS_rasqual {
+    container 'ndatth/rasqual:v0.0.0'
+    publishDir "${params.outdir}/RNA_qtl_input", mode: 'symlink', overwrite: true
+    memory '64 GB'
+    cpus 8
+
+    input:
+    val chr
+    path meta
+    path split_chrom
+    path genome
+
+    output:
+    tuple path("${chr}_RNA.exp.bin"), path("${chr}_RNA.exp.txt"), path("${chr}_RNA.size_factors.bin"), path("${chr}_RNA.size_factors.txt"), path("${chr}_snp_counts.tsv")
 
 
+    script:
+    """
+    RNA_rasqual_processor.R ${meta} ${chr}_count.txt ${chr}.vcf.gz $genome $params.RNA_window ${task.cpus}
+    ## rename files
+    mv RNA.exp.bin ${chr}_RNA.exp.bin
+    mv RNA.exp.txt ${chr}_RNA.exp.txt
+    mv RNA.size_factors.bin ${chr}_RNA.size_factors.bin
+    mv RNA.size_factors.txt ${chr}_RNA.size_factors.txt
+    mv snp_counts.tsv ${chr}_snp_counts.tsv
+    """
+}
+
+
+
+// QTL mapping with rasqual
 
 process ATAC_RUN_rasqual {
     container 'ndatth/rasqual:v0.0.0'

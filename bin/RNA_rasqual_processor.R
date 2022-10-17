@@ -1,12 +1,12 @@
 #!/usr/bin/env Rscript
 
 options(stringsAsFactors=FALSE)
-syntax='\nUsage:\t./RNA_rasqual_processor.R meta_csv feature_count_txt genotype_vcf window phenotype_PCs'
+syntax='\nUsage:\t./RNA_rasqual_processor.R meta_csv feature_count_txt genotype_vcf genome.fa cis_window n_core'
 
 # defaut outputs:
-# atac.covs.bin - atac.covs.txt
-# atac.exp.bin - atac.exp.txt
-# atac.size_factors.bin - atac.size_factors.txt
+# rna.covs.bin - rna.covs.txt
+# rna.exp.bin - rna.exp.txt
+# rna.size_factors.bin - rna.size_factors.txt
 # snp_counts.tsv
 
 
@@ -19,96 +19,81 @@ if(length(args) < 5 ){
   quit()
 }
 
+cpu = NA
 meta_fn = args[1]
 count_fn = args[2]
 geno_fn = args[3]
-window = as.integer(args[4])
-phenotype_PCs = as.integer(args[5])
+genome_fn = args[4]
+cis_window = as.integer(args[5])
+if(length(args) >= 6) cpu = as.integer(args[6])
+if (is.na(cpu)) cpu=1
+cpu = as.integer(cpu)
+
 
 
 #setwd("/Users/datn/github/nf-rasqual/data")
 
 #############
-# input
-# meta_fn = "meta/brain.csv"
-# count_fn = "atac_count.tsv"
-# geno_fn = "genotype.vcf.gz"
+
+# setwd("/mnt/SCRATCH/ngda/nf-rasqual")
+# # input
+#  cis_window = 10000
+#  meta_fn = "data/meta/brain.csv"
+#  count_fn = "/mnt/SCRATCH/ngda/nf-rasqual/results/RNA_split_chrom/29_count.txt"
+#  geno_fn = "data/genotype.vcf.gz"
+#  genome_fn = "/mnt/users/ngda/genomes/atlantic_salmon/Salmo_salar.Ssal_v3.1.dna_sm.toplevel.fa"
+
 #############
 # output:
-# atac.covs.bin - atac.covs.txt
-# atac.exp.bin - atac.exp.txt
-# atac.size_factors.bin - atac.size_factors.txt
-# snp_counts.tsv
+# rna.exp.bin - rna.exp.txt
+# rna.size_factors.bin - rna.size_factors.txt
 #############
 
 
 require(rasqualTools)
+require(GenomicFeatures)
+require(Biostrings)
 require(data.table)
+require(foreach)
+require(doParallel)
+registerDoParallel(cores=cpu)
+
 
 set.seed(2022)
 
-# randomize <- function(x,g=NULL){
-#   # author Natsuhiko Kumasaka
-#   if(is.null(g)){
-#     n=ncol(x);
-#     t(apply(x,1,function(xx){xx[order(runif(n))]}))
-#   }else{
-#     for(i in unique(g)){
-#       x[,g==i]=randomize(x[,g==i,drop=F])
-#     }
-#     x
-#   }
-# }
 
-# rasqualMakeCovariates <- function(counts, size_factors) {
-#   # author Natsuhiko Kumasaka
-#   #Map parameters to Natsuhiko's variables
-#   Y = counts
-#   K = size_factors
-#   n=ncol(Y)
-  
-#   # fpm calculation
-#   fpkm=t(t(Y/K+1)/apply(Y/K,2,sum))*1e6 #  /len*1e9
-  
-#   # Singular value decomposition
-#   fpkm.svd   = svd((log(fpkm)-apply(log(fpkm),1,mean))/apply(log(fpkm),1,sd))
-#   fpkm.svd.r = svd(randomize((log(fpkm)-apply(log(fpkm),1,mean))/apply(log(fpkm),1,sd)))
-  
-#   # Covariate selection
-#   sf=log(apply(Y,2,sum))
-#   covs=fpkm.svd$v[,1:sum(fpkm.svd$d[-n]>fpkm.svd.r$d[-n])]
-#   if(cor(sf,covs[,1])^2<0.9){covs=cbind(sf, covs)}
-  
-#   # Write covariates
-#   return(covs)
-# }
-
-
-
-PCA_Covariates <- function(counts, size_factors, n_PCs = 2) {
-  # author Natsuhiko Kumasaka
-  #Map parameters to Natsuhiko's variables
-  Y = counts
-  K = size_factors
-  n=ncol(Y)
-  
-  # fpm calculation
-  fpkm=t(t(Y/K+1)/apply(Y/K,2,sum))*1e6 #  /len*1e9
-  
-  ## author Dat T Nguyen
-  p = prcomp(fpkm)
-  pca = p$rotation[,1:n_PCs]
-  # Write covariates
-  return(pca)
+get_GC <- function(genome, feature_info){
+  #for(i in 1:nrow(feature_info)){
+  seqs = foreach(i = 1:nrow(feature_info),.combine = c) %dopar% {
+    x = ""
+    row = feature_info[i,]
+    chr = row$chr
+    s = unlist(strsplit(row$exon_starts, ","))
+    s = as.integer(s)
+    e = unlist(strsplit(row$exon_ends, ","))
+    e = as.integer(e)
+    x = substring(genome[chr], s, e)
+    x = paste(x, collapse = "")
+  }
+  seqs = DNAStringSet(seqs)
+  alf <- Biostrings::alphabetFrequency(seqs, as.prob=TRUE)
+  gc = rowSums(alf[,c("G", "C"), drop=FALSE])
+  return(gc)
 }
+
 
 meta = fread(meta_fn, sep = ",")
 meta = as.data.frame(meta)
-count = fread(count_fn, skip = 1, sep = "\t")
+count = fread(count_fn, skip = "gene_id", header = T, sep = "\t")
 count = as.data.frame(count)
-
 genotype = fread(geno_fn, skip = "CHROM", sep = "\t")
 genotype = as.data.frame(genotype)
+
+# process genome for GC counting
+genome = readDNAStringSet(genome_fn)
+tem = strsplit(names(genome), " ")
+names(genome) = do.call("rbind", tem)[,1]
+
 
 # ordering count data by genotype data
 geno_id = colnames(genotype)[-c(1:9)]
@@ -117,42 +102,47 @@ od = match(geno_id, meta$genotype_id)
 meta = meta[od,]
 rownames(meta) = meta$genotype_id
 
-atac_peaks = paste(count$Geneid, count$Chr, count$Start, count$End, count$Strand, count$Length, sep = ":")
-count2 = count[,-c(1:6)]
-row.names(count2) = atac_peaks
-count2 = count2[ ,meta$atac_count_id]
-colnames(count2) = meta$genotype_id
+gene_id = count$gene_id
 
-## save count maxtrix
-saveRasqualMatrices(list( atac = count2), ".", file_suffix = "exp")
-
-## size factor
-size_factors = rasqualCalculateSampleOffsets(count2, gc_correct = FALSE)
-saveRasqualMatrices(list(atac = size_factors), ".", file_suffix = "size_factors")
-
-## covariates
-covs = PCA_Covariates(count2, size_factors, phenotype_PCs)
-covs = cbind(meta[,-c(1:6)], covs)
-saveRasqualMatrices(list(atac = covs), ".", file_suffix = "covs")
 
 ## counting snps overlapping atac peaks
-peak_info = data.frame(gene_id = atac_peaks)
-peak_info$chr = as.character(count$Chr)
-peak_info$strand = 1
-peak_info$strand[which(count$Strand == "-")] = -1
-peak_info$strand = as.integer(peak_info$strand)
-peak_info$exon_starts = as.character(count$Start)
-peak_info$exon_ends = as.character(count$End)
+gene_info = data.frame(gene_id = gene_id)
+gene_info$chr = as.character(count$chr)
+gene_info$strand = 1
+gene_info$strand[which(count$strand == "-")] = -1
+gene_info$strand = as.integer(gene_info$strand)
+gene_info$exon_starts = count$exon_starts
+gene_info$exon_ends = count$exon_ends
 
 snp_info = genotype[,c(1:3)]
 colnames(snp_info) = c("chr", "pos", "snp_id")
 #snp_info$chr = gsub("ssa0", "", snp_info$chr, fixed = TRUE)
 #snp_info$chr = gsub("ssa", "", snp_info$chr, fixed = TRUE)
 
-snp_counts = countSnpsOverlapingExons(peak_info, snp_info, cis_window = window)
+snp_counts = countSnpsOverlapingExons(gene_info, snp_info, cis_window = cis_window)
 fwrite(snp_counts, file = "snp_counts.tsv", sep = "\t")
 
 
 
+## save count maxtrix
+count2 = count[,-c(1:5)]
+row.names(count2) = gene_id
+count2 = count2[ ,meta$rna_count_id]
+colnames(count2) = meta$genotype_id
+saveRasqualMatrices(list( atac = count2), ".", file_suffix = "exp")
+
+## size factor
+# GC counting
+gc = get_GC(genome, gene_info)
+gc_percentage = gc*100
+GC = data.frame(gene_id = row.names(count2), percentage_gc_content = gc_percentage)
+# comput size factors
+size_factors = rasqualCalculateSampleOffsets(count2, GC)
+saveRasqualMatrices(list(rna = size_factors), ".", file_suffix = "size_factors")
+
+# ## covariates
+# covs = PCA_Covariates(count2, size_factors, phenotype_PCs)
+# covs = cbind(meta[,-c(1:6)], covs)
+# saveRasqualMatrices(list(atac = covs), ".", file_suffix = "covs")
 
 

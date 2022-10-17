@@ -62,7 +62,7 @@ PCA_Covariates <- function(counts, size_factors, n_PCs = 2) {
 
 meta = fread(meta_fn, sep = ",")
 meta = as.data.frame(meta)
-count = fread(count_fn, header = T, sep = "\t")
+count = fread(count_fn, skip = "gene_id", header = T, sep = "\t")
 count = as.data.frame(count)
 genotype = fread(geno_fn, skip = "CHROM", sep = "\t")
 genotype = as.data.frame(genotype)
