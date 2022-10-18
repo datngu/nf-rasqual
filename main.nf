@@ -30,7 +30,7 @@ params.outdir          = "results"
 
 // running options
 params.chrom           = 1..29 
-params.permute         = 2
+params.permute         = 30
 params.phenotype_PCs   = 2 
 params.exp_prop        = 0.5
 params.fpkm_cutoff     = 0.5
