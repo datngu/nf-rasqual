@@ -29,7 +29,7 @@ params.meta            = "$baseDir/data/meta/brain.csv"
 params.outdir          = "results"
 
 // running options
-params.chrom           = 25..29 
+params.chrom           = 1..29 
 params.permute         = 2
 params.phenotype_PCs   = 2 
 params.exp_prop        = 0.5
