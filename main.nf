@@ -30,18 +30,18 @@ params.outdir          = "results"
 
 // running options
 params.chrom           = 25..29 
-params.permute         = 20
+params.permute         = 2
 params.phenotype_PCs   = 2 
 params.exp_prop        = 0.5
 params.fpkm_cutoff     = 0.5
 params.maf             = 0.05
 params.fdr             = 0.1
 params.atac_window     = 10000
-params.eqtl_window     = 10000
+params.eqtl_window     = 500000
 
 // pipeline options
 params.atac_qtl          = true
-params.eqtl_qtl          = false
+params.eqtl_qtl          = true
 
 
 log.info """\
@@ -95,7 +95,7 @@ workflow {
 
         ATAC_MERGE_rasqual(chrom_list_ch.max(), ATAC_RUN_rasqual.out.collect())
         ATAC_MERGE_rasqual_permutation(chrom_list_ch.max(), ATAC_RUN_rasqual_permutation.out.collect())
-        //ATAC_COMPUTE_rasqual_emperical_pvalues(ATAC_MERGE_rasqual.out.collect(), ATAC_MERGE_rasqual_permutation.out.collect())
+        ATAC_COMPUTE_rasqual_emperical_pvalues(ATAC_MERGE_rasqual.out.collect(), ATAC_MERGE_rasqual_permutation.out.collect())
     }
 
     if( params.eqtl_qtl ){
