@@ -567,7 +567,7 @@ process RNA_RUN_rasqual_permutation {
 
     for i in \$(seq 1 $params.permute)
     do
-        rasqual_permute.R vcf=${chr}.vcf.gz y=${chr}_rna.exp.bin k=${chr}_rna.size_factors.bin x=rna.covs_all_chrom.bin x_txt=rna.covs_all_chrom txt meta=${chr}_snp_counts.tsv out=${chr}_permute_\${i}_rasqual_lead_snp.txt cpu=${task.cpus}
+        rasqual_permute.R vcf=${chr}.vcf.gz y=${chr}_rna.exp.bin k=${chr}_rna.size_factors.bin x=rna.covs_all_chrom.bin x_txt=rna.covs_all_chrom.txt meta=${chr}_snp_counts.tsv out=${chr}_permute_\${i}_rasqual_lead_snp.txt cpu=${task.cpus}
     done
 
     """
