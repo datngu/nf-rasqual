@@ -224,7 +224,7 @@ process ATAC_FILTERING_expression {
 
     script:
     """
-    RNA_filtering.R $atac_count atac_consensus_peak_featureCounts_filtered.txt $params.exp_prop $params.fpkm_cutoff
+    ATAC_filtering.R $atac_count atac_consensus_peak_featureCounts_filtered.txt $params.exp_prop $params.fpkm_cutoff
     """
 }
 
