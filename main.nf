@@ -106,6 +106,12 @@ workflow {
         RNA_PROCESS_covariates(params.meta, RNA_FILTERING_expression.out, params.genotype)
         RNA_SPLIT_chromosome(chrom_list_ch, RNA_ADD_AS_vcf.out, RNA_FILTERING_expression.out )
         RNA_PREPROCESS_rasqual(chrom_list_ch, params.meta, RNA_SPLIT_chromosome.out.collect(), params.genome)
+
+        RNA_RUN_rasqual(chrom_list_ch, RNA_PREPROCESS_rasqual.out.collect(), RNA_SPLIT_chromosome.out.collect(), RNA_PROCESS_covariates.out)
+        RNA_RUN_rasqual_permutation(chrom_list_ch, RNA_PREPROCESS_rasqual.out.collect(), RNA_SPLIT_chromosome.out.collect(), RNA_PROCESS_covariates.out)
+        RNA_MERGE_rasqual(chrom_list_ch.max(), RNA_RUN_rasqual.out.collect())
+        RNA_MERGE_rasqual_permutation(chrom_list_ch.max(), RNA_RUN_rasqual_permutation.out.collect())
+        RNA_COMPUTE_rasqual_emperical_pvalues(RNA_MERGE_rasqual.out.collect(), RNA_MERGE_rasqual_permutation.out.collect())
     }
 }
 
@@ -433,6 +439,35 @@ process ATAC_RUN_rasqual {
 }
 
 
+process RNA_RUN_rasqual {
+    container 'ndatth/rasqual:v0.0.0'
+    publishDir "${params.outdir}/RNA_results_rasqual", mode: 'symlink', overwrite: true
+    memory '64 GB'
+    cpus 16
+
+    input:
+    val chr
+    path preproces_data
+    path split_chrom
+    path covariates
+
+    output:
+    path("${chr}_rasqual_lead_snp.txt")
+
+
+    script:
+    """
+    rasqual.R vcf=${chr}.vcf.gz y=${chr}_rna.exp.bin k=${chr}_rna.size_factors.bin x=rna.covs_all_chrom.bin x_txt=rna.covs_all_chrom.txt meta=${chr}_snp_counts.tsv out=${chr}_rasqual_lead_snp.txt cpu=${task.cpus}
+    """
+}
+
+
+
+
+
+// merge rasqual results
+
+
 process ATAC_MERGE_rasqual {
     container 'ndatth/rasqual:v0.0.0'
     publishDir "${params.outdir}/ATAC_results_rasqual", mode: 'symlink', overwrite: true
@@ -441,7 +476,7 @@ process ATAC_MERGE_rasqual {
 
     input:
     val max_chr
-    path atac_rasqual_results
+    path rasqual_results
 
     output:
     path("all_chromosome_rasqual_lead_snp.txt")
@@ -456,6 +491,36 @@ process ATAC_MERGE_rasqual {
     """
 }
 
+
+process RNA_MERGE_rasqual {
+    container 'ndatth/rasqual:v0.0.0'
+    publishDir "${params.outdir}/RNA_results_rasqual", mode: 'symlink', overwrite: true
+    memory '8 GB'
+    cpus 1
+
+    input:
+    val max_chr
+    path rasqual_results
+
+    output:
+    path("all_chromosome_rasqual_lead_snp.txt")
+
+
+    script:
+    """
+    for chr in \$(seq 1 $max_chr)
+    do
+        cat \${chr}_rasqual_lead_snp.txt >> all_chromosome_rasqual_lead_snp.txt
+    done
+    """
+}
+
+
+
+
+
+
+// run rasqual permulation
 
 process ATAC_RUN_rasqual_permutation {
     container 'ndatth/rasqual:v0.0.0'
@@ -479,6 +544,37 @@ process ATAC_RUN_rasqual_permutation {
     """
 }
 
+
+
+process RNA_RUN_rasqual_permutation {
+    container 'ndatth/rasqual:v0.0.0'
+    publishDir "${params.outdir}/RNA_results_rasqual_permutaion", mode: 'symlink', overwrite: true
+    memory '64 GB'
+    cpus 16
+
+    input:
+    val chr
+    path preproces_data
+    path split_chrom
+    path covariates
+
+    output:
+    path("${chr}_permute_*_rasqual_lead_snp.txt")
+
+
+    script:
+    """
+
+    for i in \$(seq 1 $params.permute)
+    do
+        rasqual_permute.R vcf=${chr}.vcf.gz y=${chr}_rna.exp.bin k=${chr}_rna.size_factors.bin x=rna.covs_all_chrom.bin x_txt=rna.covs_all_chrom txt meta=${chr}_snp_counts.tsv out=${chr}_permute_\${i}_rasqual_lead_snp.txt cpu=${task.cpus}
+    done
+
+    """
+}
+
+
+// merge rasqual permutation results
 
 process ATAC_MERGE_rasqual_permutation {
     container 'ndatth/rasqual:v0.0.0'
@@ -508,9 +604,60 @@ process ATAC_MERGE_rasqual_permutation {
 
 
 
+process RNA_MERGE_rasqual_permutation {
+    container 'ndatth/rasqual:v0.0.0'
+    publishDir "${params.outdir}/RNA_results_rasqual_permutaion", mode: 'symlink', overwrite: true
+    memory '8 GB'
+    cpus 1
+
+    input:
+    val max_chr
+    path rasqual_results
+
+    output:
+    path("permute_*_all_chromosome_rasqual_lead_snp.txt")
+
+
+    script:
+    """
+    for i in \$(seq 1 $params.permute)
+    do
+        for chr in \$(seq 1 $max_chr)
+        do
+            cat \${chr}_permute_\${i}_rasqual_lead_snp.txt >> permute_\${i}_all_chromosome_rasqual_lead_snp.txt
+        done
+    done
+    """
+}
+
+
+// compute rasqual emperical pvalues
+
+
 process ATAC_COMPUTE_rasqual_emperical_pvalues {
     container 'ndatth/rasqual:v0.0.0'
     publishDir "${params.outdir}/ATAC_results_emperical_pvalues", mode: 'symlink', overwrite: true
+    memory '8 GB'
+    cpus 1
+
+    input:
+    path merged_results
+    path permuation_merged_results
+
+    output:
+    path("rasqual_emperical_pvalues.txt")
+
+
+    script:
+    """
+    rasqual_emperical_pvalues.R rasqual_emperical_pvalues.txt $merged_results $permuation_merged_results
+    """
+}
+
+
+process RNA_COMPUTE_rasqual_emperical_pvalues {
+    container 'ndatth/rasqual:v0.0.0'
+    publishDir "${params.outdir}/RNA_results_emperical_pvalues", mode: 'symlink', overwrite: true
     memory '8 GB'
     cpus 1
 
