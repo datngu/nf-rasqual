@@ -29,7 +29,7 @@ params.meta            = "$baseDir/data/meta/brain.csv"
 params.outdir          = "results"
 
 // running options
-params.chrom           = 1..29 
+params.chrom           = 25..29 
 params.permute         = 20
 params.phenotype_PCs   = 2 
 params.exp_prop        = 0.5
@@ -41,7 +41,7 @@ params.eqtl_window     = 10000
 
 // pipeline options
 params.atac_qtl          = true
-params.eqtl_qtl          = true
+params.eqtl_qtl          = false
 
 
 log.info """\
@@ -85,8 +85,9 @@ workflow {
         ATAC_BAM_rename(params.meta, atac_bam_ch.collect())
         ATAC_ADD_AS_vcf(params.genotype, ATAC_BAM_rename.out)
 
-        ATAC_PROCESS_covariates(params.meta, params.atac_count, params.genotype)
-        ATAC_SPLIT_chromosome(chrom_list_ch, ATAC_ADD_AS_vcf.out, params.atac_count )
+        ATAC_FILTERING_expression(params.atac_count)
+        ATAC_PROCESS_covariates(params.meta, ATAC_FILTERING_expression.out, params.genotype)
+        ATAC_SPLIT_chromosome(chrom_list_ch, ATAC_ADD_AS_vcf.out, ATAC_FILTERING_expression.out )
         ATAC_PREPROCESS_rasqual(chrom_list_ch, params.meta, ATAC_SPLIT_chromosome.out.collect(), params.genome)
 
         ATAC_RUN_rasqual(chrom_list_ch, ATAC_PREPROCESS_rasqual.out.collect(), ATAC_SPLIT_chromosome.out.collect(), ATAC_PROCESS_covariates.out)
@@ -94,7 +95,7 @@ workflow {
 
         ATAC_MERGE_rasqual(chrom_list_ch.max(), ATAC_RUN_rasqual.out.collect())
         ATAC_MERGE_rasqual_permutation(chrom_list_ch.max(), ATAC_RUN_rasqual_permutation.out.collect())
-        ATAC_COMPUTE_rasqual_emperical_pvalues(ATAC_MERGE_rasqual.out.collect(), ATAC_MERGE_rasqual_permutation.out.collect())
+        //ATAC_COMPUTE_rasqual_emperical_pvalues(ATAC_MERGE_rasqual.out.collect(), ATAC_MERGE_rasqual_permutation.out.collect())
     }
 
     if( params.eqtl_qtl ){
@@ -102,6 +103,7 @@ workflow {
         RNA_BAM_rename(params.meta, rna_bam_ch.collect())
         RNA_ADD_AS_vcf(params.genotype, RNA_BAM_rename.out)
         GTF_GENE_INFO_parser(params.annotation)
+    
         RNA_FILTERING_expression(params.rna_count, GTF_GENE_INFO_parser.out)
         RNA_PROCESS_covariates(params.meta, RNA_FILTERING_expression.out, params.genotype)
         RNA_SPLIT_chromosome(chrom_list_ch, RNA_ADD_AS_vcf.out, RNA_FILTERING_expression.out )
@@ -208,6 +210,26 @@ process RNA_ADD_AS_vcf {
 // expression filtering
 
 
+process ATAC_FILTERING_expression {
+
+    container 'ndatth/rasqual:v0.0.0'
+    publishDir "${params.outdir}/ATAC_filtering_expression", mode: 'symlink', overwrite: true
+    memory '8 GB'
+
+    input:
+    path atac_count
+
+    output:
+    path "atac_consensus_peak_featureCounts_filtered.txt"
+
+    script:
+    """
+    RNA_filtering.R $atac_count atac_consensus_peak_featureCounts_filtered.txt $params.exp_prop $params.fpkm_cutoff
+    """
+}
+
+
+
 process GTF_GENE_INFO_parser {
 
     container 'ndatth/rasqual:v0.0.0'
@@ -310,7 +332,6 @@ process ATAC_SPLIT_chromosome {
     script:
     """
     awk 'NR==1{print }' $in_exp > ${chr}_count.txt
-    awk 'NR==2{print }' $in_exp >> ${chr}_count.txt
     awk -v chr=$chr '{ if (\$2 == $chr) { print } }' $in_exp >> ${chr}_count.txt
 
     bcftools view processed.vcf.gz --regions $chr -Oz -o ${chr}.vcf.gz
@@ -541,6 +562,14 @@ process ATAC_RUN_rasqual_permutation {
     script:
     """
     rasqual_permute.sh ${chr}.vcf.gz ${chr}_atac.exp.bin ${chr}_atac.size_factors.bin atac.covs_all_chrom.bin atac.covs_all_chrom.txt ${chr}_snp_counts.tsv ${task.cpus} ${params.permute} ${chr}
+
+
+    for i in \$(seq 1 $params.permute)
+    do
+        rasqual_permute.R vcf=${chr}.vcf.gz y=${chr}_atac.exp.bin k=${chr}_atac.size_factors.bin x=atac.covs_all_chrom.bin x_txt=atac.covs_all_chrom.txt meta=${chr}_snp_counts.tsv out=${chr}_permute_\${i}_rasqual_lead_snp.txt cpu=${task.cpus}
+    done
+
+
     """
 }
 

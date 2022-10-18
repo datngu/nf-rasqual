@@ -62,14 +62,19 @@ registerDoParallel(cores=cpu)
 set.seed(2022)
 
 
+
 get_GC <- function(genome, feature_info){
   #for(i in 1:nrow(feature_info)){
   seqs = foreach(i = 1:nrow(feature_info),.combine = c) %dopar% {
+    x = ""
     row = feature_info[i,]
     chr = row$chr
-    s = as.integer(strsplit(row$exon_starts, ","))
-    e = as.integer(strsplit(row$exon_ends, ","))
+    s = unlist(strsplit(row$exon_starts, ","))
+    s = as.integer(s)
+    e = unlist(strsplit(row$exon_ends, ","))
+    e = as.integer(e)
     x = substring(genome[chr], s, e)
+    x = paste(x, collapse = "")
   }
   seqs = DNAStringSet(seqs)
   alf <- Biostrings::alphabetFrequency(seqs, as.prob=TRUE)
@@ -77,10 +82,23 @@ get_GC <- function(genome, feature_info){
   return(gc)
 }
 
+# HANDLING UNKNOWN ERROR WHEN COMPUTE OFFSETS
+get_offset <- function(count2, GC) {
+  x = try(rasqualCalculateSampleOffsets(count2, GC))
+  if(class(x) == "matrix"){
+    res = x
+  }else{
+    res = rasqualCalculateSampleOffsets(count2, gc_correct = FALSE)
+  }
+  return(res)
+}
+
+
+
 
 meta = fread(meta_fn, sep = ",")
 meta = as.data.frame(meta)
-count = fread(count_fn, skip = 1, sep = "\t")
+count = fread(in_count, skip = "Geneid", header = T, sep = "\t")
 count = as.data.frame(count)
 genotype = fread(geno_fn, skip = "CHROM", sep = "\t")
 genotype = as.data.frame(genotype)
@@ -132,13 +150,11 @@ saveRasqualMatrices(list( atac = count2), ".", file_suffix = "exp")
 gc = get_GC(genome, peak_info)
 gc_percentage = gc*100
 GC = data.frame(gene_id = row.names(count2), percentage_gc_content = gc_percentage)
+
 # comput size factors
-size_factors = rasqualCalculateSampleOffsets(count2, GC)
+size_factors = get_offset(count2, GC)
 saveRasqualMatrices(list(atac = size_factors), ".", file_suffix = "size_factors")
 
-# ## covariates
-# covs = PCA_Covariates(count2, size_factors, phenotype_PCs)
-# covs = cbind(meta[,-c(1:6)], covs)
-# saveRasqualMatrices(list(atac = covs), ".", file_suffix = "covs")
+
 
 
