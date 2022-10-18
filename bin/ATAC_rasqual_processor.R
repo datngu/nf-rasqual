@@ -98,7 +98,7 @@ get_offset <- function(count2, GC) {
 
 meta = fread(meta_fn, sep = ",")
 meta = as.data.frame(meta)
-count = fread(in_count, skip = "Geneid", header = T, sep = "\t")
+count = fread(count_fn, skip = "Geneid", header = T, sep = "\t")
 count = as.data.frame(count)
 genotype = fread(geno_fn, skip = "CHROM", sep = "\t")
 genotype = as.data.frame(genotype)
