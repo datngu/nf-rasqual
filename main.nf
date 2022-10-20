@@ -30,14 +30,14 @@ params.outdir          = "results"
 
 // running options
 params.chrom           = 1..29 
-params.permute         = 30
+params.permute         = 10
 params.phenotype_PCs   = 2 
 params.exp_prop        = 0.5
 params.fpkm_cutoff     = 0.5
 params.maf             = 0.05
 params.fdr             = 0.1
 params.atac_window     = 10000
-params.eqtl_window     = 500000
+params.eqtl_window     = 250000
 
 // pipeline options
 params.atac_qtl          = true
