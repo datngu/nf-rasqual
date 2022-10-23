@@ -23,21 +23,25 @@ cd /mnt/users/ngda/ngs_data/atlantic_salmon/wgs
 #
 
 
-# 1. brain
-home_dir=/mnt/users/ngda/ngs_data/atlantic_salmon/brain
+cd /mnt/ScratchProjects/Aqua-Faang/dat_projects/paper1/data/salmon
 
-cp /mnt/project/Aqua-Faang/seq_results/AtlanticSalmon/BodyMap/ATAC/Brain/results/bwa/mergedLibrary/macs/broadPeak/consensus/consensus_peaks.mLb.clN.featureCounts.txt ${home_dir}/atac_consensus_peak_featureCounts.txt
+
+# 1. brain
+home_dir=$PWD/brain
+mkdir $home_dir
+
+cp /mnt/project/Aqua-Faang/seq_results/AtlanticSalmon/BodyMap/ATAC/Brain/old_results/bwa/mergedLibrary/macs/broadPeak/consensus/consensus_peaks.mLb.clN.featureCounts.txt ${home_dir}/atac_consensus_peak_featureCounts.txt
 
 cp /mnt/project/Aqua-Faang/seq_results/AtlanticSalmon/BodyMap/RNA/Brain/results/star_salmon/salmon.merged.gene_counts.tsv ${home_dir}/rna_gene_level_count_salmon.txt
 
 
-cp /mnt/project/Aqua-Faang/seq_results/AtlanticSalmon/BodyMap/RNA/Brain/results/star_salmon/salmon.merged.gene_tpm.tsv ${home_dir}/rna_gene_level_tpm_salmon.txt
+#cp /mnt/project/Aqua-Faang/seq_results/AtlanticSalmon/BodyMap/RNA/Brain/results/star_salmon/salmon.merged.gene_tpm.tsv ${home_dir}/rna_gene_level_tpm_salmon.txt
 
 
 ## ATAC_seq
 mkdir ${home_dir}/atac_bam
 
-source_data=/mnt/project/Aqua-Faang/seq_results/AtlanticSalmon/BodyMap/ATAC/Brain/results/bwa/mergedLibrary
+source_data=/mnt/project/Aqua-Faang/seq_results/AtlanticSalmon/BodyMap/ATAC/Brain/old_results/bwa/mergedLibrary
 
 cd $source_data
 for fn in *bam*
@@ -60,5 +64,36 @@ done
 
 # 2. gill
 
+
+home_dir=$PWD/gill
+mkdir $home_dir
+
+cp /mnt/project/Aqua-Faang/seq_results/AtlanticSalmon/BodyMap/ATAC/Gill/old_results/bwa/mergedLibrary/macs/broadPeak/consensus/consensus_peaks.mLb.clN.featureCounts.txt ${home_dir}/atac_consensus_peak_featureCounts.txt
+
+cp /mnt/project/Aqua-Faang/seq_results/AtlanticSalmon/BodyMap/RNA/Gill/results/star_salmon/salmon.merged.gene_counts.tsv ${home_dir}/rna_gene_level_count_salmon.txt
+
+
+
+## ATAC_seq
+mkdir ${home_dir}/atac_bam
+
+source_data=/mnt/project/Aqua-Faang/seq_results/AtlanticSalmon/BodyMap/ATAC/Gill/old_results/bwa/mergedLibrary
+
+cd $source_data
+for fn in *bam*
+do
+	cp $fn ${home_dir}/atac_bam/$fn
+done
+
+## RNA seq
+mkdir ${home_dir}/rna_bam
+
+source_data=/mnt/project/Aqua-Faang/seq_results/AtlanticSalmon/BodyMap/RNA/Gill/results/star_salmon
+
+cd $source_data
+for fn in *bam*
+do
+	cp $fn ${home_dir}/rna_bam/$fn
+done
 
 
