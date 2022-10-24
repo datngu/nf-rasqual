@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --ntasks=1
 #SBATCH --nodes=1                
-#SBATCH --job-name=Gill   
+#SBATCH --job-name=Brain   
 #SBATCH --mem=4G                
 #SBATCH --partition=gpu
 #SBATCH --mail-user=nguyen.thanh.dat@nmbu.no
@@ -15,8 +15,8 @@ module load singularity/rpm
 
 
 
-#tissue_list="Brain Gill Gonad Liver Muscle"
-tis="Gill"
+
+
 
 run_nextflow () {
   tis=$1
@@ -44,4 +44,5 @@ run_nextflow () {
   nextflow run main.nf -resume --meta $meta_file --genome $genome --annotation $annotation --atac_bam $atac_bam --atac_count $atac_count --rna_bam $rna_bam --rna_count $rna_count --genotype $genotype --outdir $nextflow_res_dir
 }
 
-run_nextflow Gill
+#tissue_list="Brain Gill Gonad Liver Muscle"
+run_nextflow Brain
