@@ -4,7 +4,7 @@
 # Date: 12 Sep 2022
 
 syntax="
-Usage: rasqual_permuate.R vcf=path/to/vcf.gz y=path/to/feature_count.bin k=path/to/offset.bin x=path/to/covariates.bin x_txt=path/to/covariates.txt meta=path/to/meta.txt out=path/to/output.txt cpu=16
+Usage: rasqual.R vcf=path/to/vcf.gz y=path/to/feature_count.bin k=path/to/offset.bin x=path/to/covariates.bin x_txt=path/to/covariates.txt meta=path/to/meta.txt out=path/to/output.txt cpu=16
 
 Input parameters are:
     vcf=path/to/vcf.gz (tabix indexed)
@@ -71,8 +71,8 @@ job_list = foreach(j = 1:nrow(info),.combine=rbind) %dopar% {
     cmd = paste0("tabix ", vcf, " ", row[2], ":", row[6], "-", row[7])
     cmd = paste0(cmd, " | rasqual -y ", y, " -k ", k, " -x ", x, " -n ", n, " -j ", j, " -l ", row[9], " -m ", row[8] )
     cmd = paste0(cmd, " -s ", row[4], " -e ", row[5], " -f " , row[1])
-    cmd = paste0(cmd, " --random-permutation -t --force > ./tem_results/", row[1])
-    try(system(cmd))
+    cmd = paste0(cmd, " -t > ./tem_results/", row[1])
+    system(cmd)
 }
 
 ## test
