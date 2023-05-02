@@ -50,7 +50,7 @@ run_nextflow () {
       --rna_count $rna_count \
       --genotype $genotype \
       --outdir $nextflow_res_dir \
-      --trace_dir $nextflow_trace_dir \
+      --trace_dir $nextflow_trace_dir
 }
 
 #tissue_list="Brain Gill Gonad Liver Muscle"
