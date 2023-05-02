@@ -18,7 +18,6 @@
  Define the default parameters
 */ 
 params.genome          = "$baseDir/data/ref/genome.fa"
-params.cdna            = "$baseDir/data/ref/cdna.fa"
 params.annotation      = "$baseDir/data/ref/annotation.gtf"
 params.atac_bam        = "$baseDir/data/atac_bam/*.bam"
 params.atac_count      = "$baseDir/data/atac_consensus_peak_featureCounts.txt"
@@ -52,7 +51,6 @@ log.info """\
                         nf-rasqual
 ================================================================
     genome              : $params.genome
-    cdna                : $params.cdna
     annotation          : $params.annotation
     atac_bam            : $params.atac_bam
     atac_count          : $params.atac_count
