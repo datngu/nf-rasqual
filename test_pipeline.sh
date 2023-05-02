@@ -28,8 +28,6 @@ run_nextflow () {
   meta_file=/mnt/ScratchProjects/Aqua-Faang/dat_projects/paper1/data/salmon/meta/${tis}.csv
   # genotype
   genotype=/mnt/ScratchProjects/Aqua-Faang/dat_projects/paper1/data/salmon/WGS/genotype_new.vcf.gz
-  # LD genotype
-  ld_genotype=/mnt/project/Aqua-Faang/dat/wgs_504/ALL_chrome_phased_filtered_HWE_1e6_biSNPs.vcf.gz
   # atac
   atac_bam=/mnt/ScratchProjects/Aqua-Faang/dat_projects/paper1/data/salmon/${tis}/atac_bam/*{.bam,.bai}
   atac_count=/mnt/ScratchProjects/Aqua-Faang/dat_projects/paper1/data/salmon/${tis}/atac_consensus_peak_featureCounts.txt
