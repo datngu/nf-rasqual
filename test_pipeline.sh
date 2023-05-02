@@ -57,3 +57,5 @@ run_nextflow () {
 
 #tissue_list="Brain Gill Gonad Liver Muscle"
 run_nextflow Brain
+
+
