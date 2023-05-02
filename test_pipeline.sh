@@ -16,7 +16,11 @@ module load singularity/rpm
 
 cd /mnt/ScratchProjects/Aqua-Faang/dat_projects/aqua_qtl/pipeline/brain
 
-
+#mkdir -p $nextflow_work_dir
+# cd $nextflow_work_dir
+# git clone https://github.com/datngu/nf-rasqual-dev.git
+# cd nf-rasqual-dev
+#git pull
 
 run_nextflow () {
   tis=$1
@@ -38,11 +42,7 @@ run_nextflow () {
   nextflow_res_dir=/mnt/ScratchProjects/Aqua-Faang/dat_projects/aqua_qtl/results/${tis}
   nextflow_trace_dir=/mnt/ScratchProjects/Aqua-Faang/dat_projects/aqua_qtl/results/trace_dir_${tis}
   nextflow_work_dir=/mnt/ScratchProjects/Aqua-Faang/dat_projects/aqua_qtl/work_dir/${tis}
-  #mkdir -p $nextflow_work_dir
-  # cd $nextflow_work_dir
-  # git clone https://github.com/datngu/nf-rasqual-dev.git
-  # cd nf-rasqual-dev
-  git pull
+
   export NXF_SINGULARITY_CACHEDIR=/mnt/users/ngda/sofware/singularity
   nextflow run main.nf -resume -w $nextflow_work_dir \
       --meta $meta_file \
