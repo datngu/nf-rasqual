@@ -14,13 +14,11 @@ module load Nextflow/21.03
 module load singularity/rpm
 
 
-cd /mnt/ScratchProjects/Aqua-Faang/dat_projects/aqua_qtl/pipeline/brain
-
-#mkdir -p $nextflow_work_dir
-# cd $nextflow_work_dir
-# git clone https://github.com/datngu/nf-rasqual-dev.git
+# cd /mnt/ScratchProjects/Aqua-Faang/dat_projects/aqua_qtl/pipeline/brain
 # cd nf-rasqual-dev
-#git pull
+
+# git clone https://github.com/datngu/nf-rasqual.git
+
 
 run_nextflow () {
   tis=$1
