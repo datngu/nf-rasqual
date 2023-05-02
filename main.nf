@@ -25,6 +25,7 @@ params.rna_bam         = "$baseDir/data/rna_bam/*.bam"
 params.rna_count       = "$baseDir/data/rna_gene_level_count_salmon.txt"
 params.genotype        = "$baseDir/data/genotype.vcf.gz"
 params.meta            = "$baseDir/data/meta/Brain.csv"
+params.trf_bed         = "$baseDir/data/atlantic_salmon_v3.1_trf.bed"
 params.outdir          = "results"
 params.trace_dir       = "trace_dir"
 
@@ -70,6 +71,8 @@ log.info """\
     phenotype_PCs       : $params.phenotype_PCs
     atac_qtl            : $params.atac_qtl
     eqtl_qtl            : $params.eqtl_qtl
+    deltaSVM            : $params.deltaSVM
+    trf_bed             : $params.trf_bed
 ================================================================
 """
 
