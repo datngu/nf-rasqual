@@ -140,3 +140,44 @@ process ATAC_deltaSVM_score_10mers {
 
     """
 }
+
+
+process ATAC_deltaSVM_average_weights {
+
+    container 'ndatth/delta-svm:v0.0.0'
+    publishDir "${params.outdir}/deltaSVM", mode: 'symlink', overwrite: true
+    memory '8 GB'
+    cpus 1
+
+    input:
+    path weights
+    
+    output:
+    path "weight_merged.txt"
+
+    script:
+    """
+        merge_lsgkm_weights.py --weight --weight ${weights} --out "weight_merged.txt"
+    """
+}
+
+
+process ATAC_deltaSVM_input_generator {
+
+    container 'ndatth/delta-svm:v0.0.0'
+    publishDir "${params.outdir}/deltaSVM", mode: 'symlink', overwrite: true
+    memory '16 GB'
+    cpus 1
+
+    input:
+    path genome
+    path vcf
+
+    output:
+    path "*_ref.fa"
+
+    script:
+    """
+        deltaSVM_input_generator.py --genome $genome --vcf $vcf --out "deltaSVM_input"
+    """
+}
