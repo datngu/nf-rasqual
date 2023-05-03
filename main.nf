@@ -723,7 +723,7 @@ process RNA_MERGE_rasqual_permutation {
 
 process ATAC_COMPUTE_rasqual_emperical_pvalues {
     container 'ndatth/rasqual:v0.0.0'
-    publishDir "${params.outdir}/ATAC_results_emperical_pvalues", mode: 'symlink', overwrite: true
+    publishDir "${params.outdir}/ATAC_results_emperical_pvalues", mode: 'copy', overwrite: true
     memory '8 GB'
     cpus 1
 
@@ -744,7 +744,7 @@ process ATAC_COMPUTE_rasqual_emperical_pvalues {
 
 process RNA_COMPUTE_rasqual_emperical_pvalues {
     container 'ndatth/rasqual:v0.0.0'
-    publishDir "${params.outdir}/RNA_results_emperical_pvalues", mode: 'symlink', overwrite: true
+    publishDir "${params.outdir}/RNA_results_emperical_pvalues", mode: 'copy', overwrite: true
     memory '8 GB'
     cpus 1
 
