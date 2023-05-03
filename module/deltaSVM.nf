@@ -157,7 +157,7 @@ process ATAC_deltaSVM_average_weights {
 
     script:
     """
-        merge_lsgkm_weights.py --weight --weight *_nr10mer_scores.txt --out "weight_merged.txt"
+        merge_lsgkm_weights.py --weight *_nr10mer_scores.txt --out "weight_merged.txt"
     """
 }
 
