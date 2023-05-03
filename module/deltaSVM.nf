@@ -185,7 +185,7 @@ process ATAC_deltaSVM_input_generator {
 process ATAC_deltaSVM {
 
     container 'ndatth/delta-svm:v0.0.0'
-    publishDir "${params.outdir}/deltaSVM", mode: 'symlink', overwrite: true
+    publishDir "${params.outdir}/deltaSVM_prediction", mode: 'copy', overwrite: true
     memory '16 GB'
     cpus 1
 
