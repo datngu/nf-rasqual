@@ -3,9 +3,16 @@
 import sys
 import gzip
 import argparse
-import pysam
 import pandas as pd
 import numpy as np
+
+try:
+    import pysam
+except ImportError:
+    from pip._internal import main as pip
+    pip(['install', '--user', 'pysam'])
+    import pysam
+
 
 
 parser = argparse.ArgumentParser(description = "Generating input fasta for deltaSVM from genome sequence and vcf.gz variant file", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
