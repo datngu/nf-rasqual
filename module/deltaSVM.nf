@@ -181,3 +181,24 @@ process ATAC_deltaSVM_input_generator {
         deltaSVM_input_generator.py --genome $genome --vcf $vcf --out "deltaSVM_input"
     """
 }
+
+
+process ATAC_deltaSVM {
+
+    container 'ndatth/delta-svm:v0.0.0'
+    publishDir "${params.outdir}/deltaSVM", mode: 'symlink', overwrite: true
+    memory '16 GB'
+    cpus 1
+
+    input:
+    path inputs
+    path weights
+
+    output:
+    path "deltaSVM_input*.fa"
+
+    script:
+    """
+        deltaSVM_input_generator.py --genome $genome --vcf $vcf --out "deltaSVM_input"
+    """
+}
