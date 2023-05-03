@@ -182,7 +182,6 @@ process ATAC_deltaSVM_input_generator {
     """
 }
 
-
 process ATAC_deltaSVM {
 
     container 'ndatth/delta-svm:v0.0.0'
@@ -195,10 +194,10 @@ process ATAC_deltaSVM {
     path weights
 
     output:
-    path "deltaSVM_input*.fa"
+    path "all_snp_deltaSVM.txt"
 
     script:
     """
-        deltaSVM_input_generator.py --genome $genome --vcf $vcf --out "deltaSVM_input"
+        deltasvm.pl deltaSVM_input_ref.fa deltaSVM_input_alt.fa $weights "all_snp_deltaSVM.txt"
     """
 }

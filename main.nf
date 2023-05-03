@@ -79,7 +79,7 @@ log.info """\
 nextflow.enable.dsl=2
 
 
-include { ATAC_deltaSVM_slipt_bed; ATAC_deltaSVM_gen_null_seqs; ATAC_deltaSVM_train; ATAC_deltaSVM_merge_models; ATAC_deltaSVM_gen_10mers; ATAC_deltaSVM_score_10mers; ATAC_deltaSVM_average_weights; ATAC_deltaSVM_input_generator } from './module/deltaSVM'
+include { ATAC_deltaSVM_slipt_bed; ATAC_deltaSVM_gen_null_seqs; ATAC_deltaSVM_train; ATAC_deltaSVM_merge_models; ATAC_deltaSVM_gen_10mers; ATAC_deltaSVM_score_10mers; ATAC_deltaSVM_average_weights; ATAC_deltaSVM_input_generator; ATAC_deltaSVM } from './module/deltaSVM'
 
 
 
@@ -129,6 +129,7 @@ workflow {
         ATAC_deltaSVM_score_10mers(ATAC_deltaSVM_train.out,ATAC_deltaSVM_gen_10mers.out)
         ATAC_deltaSVM_average_weights(ATAC_deltaSVM_score_10mers.out)
         ATAC_deltaSVM_input_generator(params.genome, VCF_filtering.out)
+        ATAC_deltaSVM(ATAC_deltaSVM_input_generator.out, ATAC_deltaSVM_average_weights.out)
     } 
 
 
