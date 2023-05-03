@@ -174,7 +174,7 @@ process ATAC_deltaSVM_input_generator {
     path vcf
 
     output:
-    path "*_ref.fa"
+    path "deltaSVM_input*.fa"
 
     script:
     """
