@@ -14,7 +14,7 @@ module load Nextflow/21.03
 module load singularity/rpm
 
 
-# cd /mnt/ScratchProjects/Aqua-Faang/dat_projects/aqua_qtl/pipeline/liver
+# cd /mnt/ScratchProjects/Aqua-Faang/dat_projects/aqua_qtl/pipeline/gill
 # cd nf-rasqual-dev
 
 # git clone https://github.com/datngu/nf-rasqual.git
