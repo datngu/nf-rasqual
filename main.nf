@@ -40,6 +40,7 @@ params.fdr             = 0.1
 params.atac_window     = 10000
 params.eqtl_window     = 500000
 params.deltaSVM_folds  = 10
+params.deltaSVM_length = 500
 
 // pipeline options
 params.atac_qtl          = true

@@ -15,3 +15,5 @@ get_tis (){
 
 get_tis Brain
 get_tis Liver
+
+get -r /mnt/ScratchProjects/Aqua-Faang/dat_projects/aqua_qtl/results/result_collect_permutation /Users/datn/DATA_ANALYSES/aqua_qtl_permutation

@@ -1,13 +1,13 @@
 #!/usr/bin/env Rscript
 
 options(stringsAsFactors=FALSE)
-syntax='\nUsage:\t./slipt_bed.R attac_filtered.txt fold_size out_prefix target_length\n'
+syntax='\nUsage:\t./slipt_bed.R attac_filtered.txt fold_size out_prefix\n'
 
-options("scipen" = 30)
+
 
 args = commandArgs(trailingOnly = TRUE)
 
-if(length(args) < 4 ){
+if(length(args) < 3 ){
   cat("\nInvalid arguments, Program stop! \n")
   cat(syntax)
   quit()
@@ -16,28 +16,17 @@ if(length(args) < 4 ){
 in_bed = args[1]
 fold_size = as.integer(args[2])
 out_prefix = args[3]
-target_length = as.integer(args[4])
 
-# in_bed = "data/atac_consensus_peak_featureCounts_filtered.txt"
+# in_bed = "/Users/datn/github/nf-rasqual-dev/data/atlantic_salmon_v3.1_trf.bed"
 # fold_size = 10
 # out_prefix = "atac_bed"
-# target_length = 500
 
-
-
-
-
-dis = as.integer(target_length/2)
 data = read.table(in_bed)
 data = as.data.frame(data)
 data = data[,c(2,3,4)]
 pick = data[,1] %in% as.character(1:29)
 data = data[pick,]
-data$c = as.integer((as.integer(data$V4) + as.integer(data$V3))/2)
-data$s = data$c - dis
-data$e = data$c + dis
 
-data = data[, c("V2", "s", "e")]
 
 data$fold_id = c(1:nrow(data))
 set.seed(2021)
