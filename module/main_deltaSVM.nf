@@ -11,6 +11,8 @@
 */
 
 
+//move out and rename as main.nf to use
+
 
 
 
@@ -39,11 +41,13 @@ params.maf             = 0.05
 params.fdr             = 0.1
 params.atac_window     = 10000
 params.eqtl_window     = 500000
-
+params.deltaSVM_folds  = 10
+params.deltaSVM_length = 500
 
 // pipeline options
 params.atac_qtl          = true
 params.eqtl_qtl          = true
+params.deltaSVM          = true
 
 
 log.info """\
@@ -70,10 +74,15 @@ log.info """\
     phenotype_PCs       : $params.phenotype_PCs
     atac_qtl            : $params.atac_qtl
     eqtl_qtl            : $params.eqtl_qtl
+    deltaSVM            : $params.deltaSVM
+    trf_bed             : $params.trf_bed
 ================================================================
 """
 
 nextflow.enable.dsl=2
+
+
+include { ATAC_deltaSVM_slipt_bed; ATAC_deltaSVM_gen_null_seqs; ATAC_deltaSVM_train; ATAC_deltaSVM_merge_models; ATAC_deltaSVM_gen_10mers; ATAC_deltaSVM_score_10mers; ATAC_deltaSVM_average_weights; ATAC_deltaSVM_input_generator; ATAC_deltaSVM } from './module/deltaSVM'
 
 
 
@@ -112,6 +121,19 @@ workflow {
         ATAC_COMPUTE_rasqual_emperical_pvalues(ATAC_MERGE_rasqual.out.collect(), ATAC_MERGE_rasqual_permutation.out.collect())
     }
     
+    // deltaSVM
+    if(params.deltaSVM){
+
+        ATAC_deltaSVM_slipt_bed(ATAC_FILTERING_expression.out)
+        ATAC_deltaSVM_gen_null_seqs(params.trf_bed, ATAC_deltaSVM_slipt_bed.out)
+        ATAC_deltaSVM_train(ATAC_deltaSVM_gen_null_seqs.out)
+        //ATAC_deltaSVM_merge_models(ATAC_deltaSVM_train.out)
+        ATAC_deltaSVM_gen_10mers()
+        ATAC_deltaSVM_score_10mers(ATAC_deltaSVM_train.out,ATAC_deltaSVM_gen_10mers.out)
+        ATAC_deltaSVM_average_weights(ATAC_deltaSVM_score_10mers.out)
+        ATAC_deltaSVM_input_generator(params.genome, VCF_filtering.out)
+        ATAC_deltaSVM(ATAC_deltaSVM_input_generator.out, ATAC_deltaSVM_average_weights.out)
+    } 
 
 
 
@@ -745,6 +767,3 @@ process RNA_COMPUTE_rasqual_emperical_pvalues {
     rasqual_emperical_pvalues.R rasqual_emperical_pvalues.txt $merged_results $permuation_merged_results
     """
 }
-
-
-
