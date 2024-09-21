@@ -43,8 +43,6 @@ params.atac_qtl          = true
 params.eqtl_qtl          = true
 params.external_ld       = false
 
-// control for FDR
-params.eigenMT_fdr       = true
 
 
 

@@ -2,7 +2,7 @@
 
 ## Overview
 
-This pipeline processes and analyzes genomic, transcriptomic, and ATAC-seq data for QTL (Quantitative Trait Loci) analysis. It uses genotype and phenotype data to identify associations, focusing on eQTLs (expression QTLs) and ATAC-QTLs. The pipeline is designed for flexibility, allowing users to configure various parameters, including the use of external linkage disequilibrium (LD) data and control for multiple testing with eigenMT FDR.
+This pipeline processes and analyzes genomic, transcriptomic, and ATAC-seq data for QTL (Quantitative Trait Loci) analysis. It uses genotype and phenotype data to identify associations, focusing on eQTLs (expression QTLs) and ATAC-QTLs. The pipeline is designed for flexibility, allowing users to configure various parameters, including the use of external linkage disequilibrium (LD) data for multiple testing correction with EigenMT.
 
 ## Inputs
 
@@ -33,7 +33,7 @@ The following input files are required:
 - **ATAC-QTL Analysis (`atac_qtl`)**: Perform ATAC-QTL analysis. Default: `true`.
 - **eQTL Analysis (`eqtl_qtl`)**: Perform eQTL analysis. Default: `true`.
 - **External LD Data (`external_ld`)**: Use external LD genotype data. Default: `false`.
-- **FDR Control with eigenMT (`eigenMT_fdr`)**: Control for false discovery rate using eigenMT. Default: `true`.
+
 
 ## Output
 
