@@ -14,7 +14,7 @@ module load Nextflow/21.03
 module load singularity/rpm
 
 
-export TOWER_ACCESS_TOKEN=eyJ0aWQiOiA3OTAxfS4xNGY5NTFmOWNiZmEwNjZhOGFkYzliZTg3MDc4YWI4ZTRiYTk4ZmI5
+export TOWER_ACCESS_TOKEN="YOURTOKEN"
 
 
 
