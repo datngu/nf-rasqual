@@ -173,20 +173,24 @@ module load Nextflow/24.04.2
 export NXF_SINGULARITY_CACHEDIR=$PWD/container
 
 nextflow run main.nf -profile saga,singularity \
-  --meta data/meta/Brain.csv \
-  --genome data/ref/Salmo_salar.Ssal_v3.1.dna_sm.toplevel.fa \
-  --annotation data/ref/Salmo_salar.Ssal_v3.1.106.gtf \
-  --atac_bam "data/Brain/atac_bam/*.bam" \
-  --atac_count data/Brain/atac_consensus_peak_counts.txt \
-  --rna_bam "data/Brain/rna_bam/*.bam" \
-  --rna_count data/Brain/rna_gene_counts.tsv \
-  --genotype data/genotype.vcf.gz \
-  --outdir results/Brain \
+  --meta "$PWD/data/meta/Brain.csv" \
+  --genome "$PWD/data/ref/Salmo_salar.Ssal_v3.1.dna_sm.toplevel.fa" \
+  --annotation "$PWD/data/ref/Salmo_salar.Ssal_v3.1.106.gtf" \
+  --atac_bam "$PWD/data/Brain/atac_bam/*.bam" \
+  --atac_count "$PWD/data/Brain/atac_consensus_peak_counts.txt" \
+  --rna_bam "$PWD/data/Brain/rna_bam/*.bam" \
+  --rna_count "$PWD/data/Brain/rna_gene_counts.tsv" \
+  --genotype "$PWD/data/genotype.vcf.gz" \
+  --outdir "$PWD/results/Brain" \
   --atac_window 10000 \
   --external_ld true \
-  --ld_genotype data/ref/ALL_chrome_phased_filtered_HWE_1e6_biSNPs_MAF_0.01.vcf.gz \
+  --ld_genotype "$PWD/data/ref/ALL_chrome_phased_filtered_HWE_1e6_biSNPs_MAF_0.01.vcf.gz" \
   --atac_qtl true \
   --eqtl_qtl true
+
 ```
+
+**FOR REVIEWERS:** If you are testing/running the pipeline on your system. The provided `nextflow.config` is a template and may require modifications to suit your specific HPC environment. Adjust parameters such as **executor settings, queue names, account, etc** according to your system's requirements. We can't help with your specific setup, but we recommend consulting the Nextflow documentation or your system admin for further customization: [https://www.nextflow.io/docs/latest/config.html](https://www.nextflow.io/docs/latest/config.html).
+
 
 The example above runs both ATAC-QTL and eQTL components. Remove `--atac_bam`, `--atac_count`, and `--atac_qtl true` if you only wish to execute the RNA component. Repeat the same download and execution steps for the other tissues (Gill, Gonad, Liver, Muscle) by swapping the tissue name in the commands; doing so reproduces the analyses performed in the nf-rasqual paper. Adjust `--outdir`, and `-w` (Nextflow work directory) as needed to point to project-specific locations with sufficient storage.
