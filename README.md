@@ -190,7 +190,7 @@ nextflow run main.nf -profile saga,singularity \
 
 ```
 
-**FOR REVIEWERS:** If you are testing/running the pipeline on your system. The provided `nextflow.config` is a template and may require modifications to suit your specific HPC environment. Adjust parameters such as **executor settings, queue names, account, etc** according to your system's requirements. We can't help with your specific setup, but we recommend consulting the Nextflow documentation or your system admin for further customization: [https://www.nextflow.io/docs/latest/config.html](https://www.nextflow.io/docs/latest/config.html).
+**FOR REVIEWERS:** We now tested the pipeline on a completely different system and can guarantee its functionality and fully reproducible. If you you would like to test the pipeline on your system. The provided `nextflow.config` is a template and may require modifications to suit your specific HPC environment. Adjust parameters and specify correct profile selection according to your system's requirements and setups. We can't help with your specific setup, but we recommend consulting the Nextflow documentation or your system admin for further customization: [https://www.nextflow.io/docs/latest/config.html](https://www.nextflow.io/docs/latest/config.html).
 
 
 The example above runs both ATAC-QTL and eQTL components. Remove `--atac_bam`, `--atac_count`, and `--atac_qtl true` if you only wish to execute the RNA component. Repeat the same download and execution steps for the other tissues (Gill, Gonad, Liver, Muscle) by swapping the tissue name in the commands; doing so reproduces the analyses performed in the nf-rasqual paper. Adjust `--outdir`, and `-w` (Nextflow work directory) as needed to point to project-specific locations with sufficient storage.
