@@ -115,6 +115,11 @@ All analyses use the Atlantic salmon genome assembly **Ssal v3.1** and **Ensembl
 Ensure that both files are saved locally and paths are correctly set for downstream analyses. The snippet below downloads and prepares the reference in `data/ref/`:
 
 ```bash
+
+# git clone git@github.com:datngu/nf-rasqual.git
+# cd nf-rasqual
+
+
 mkdir -p data/ref
 curl -Lk https://ftp.ensembl.org/pub/release-106/fasta/salmo_salar/dna/Salmo_salar.Ssal_v3.1.dna_sm.toplevel.fa.gz \
   -o data/ref/Salmo_salar.Ssal_v3.1.dna_sm.toplevel.fa.gz
@@ -122,6 +127,7 @@ curl -Lk https://ftp.ensembl.org/pub/release-106/gtf/salmo_salar/Salmo_salar.Ssa
   -o data/ref/Salmo_salar.Ssal_v3.1.106.gtf.gz
 gunzip -k data/ref/Salmo_salar.Ssal_v3.1.dna_sm.toplevel.fa.gz
 gunzip -k data/ref/Salmo_salar.Ssal_v3.1.106.gtf.gz
+
 ```
 
 ### Download LD Genotype Panel
@@ -140,11 +146,14 @@ curl -Lk https://salmobase.org/datafiles/datasets/nf-rasqual-data/ALL_chrome_pha
 The repository ships with a helper script that fetches the BAM (and .bai) and feature-count files from Salmobase.org for the nf-rasqual Atlantic salmon analysis. From the repository root you can download the Brain dataset (ATAC or RNA) as follows:
 
 ```bash
+## the download may take a few hours depending on your internet connection
 # Download ATAC files (consensus peak counts + BAMs)
 bash download.sh -t Brain -a ATAC
 
+## the download may take a few hours depending on your internet connection
 # Download RNA-seq files (Salmon counts + BAMs)
 bash download.sh -t Brain -a RNA
+
 ```
 
 Downloaded artefacts are written under `data/Brain/` in assay-specific subdirectories.
@@ -154,8 +163,12 @@ Downloaded artefacts are written under `data/Brain/` in assay-specific subdirect
 Once the reference, BAMs, and count files are in place, you can launch the Brain ATAC/RNA run on a SLURM-based HPC using Nextflow. Adjust module loads, work directories, and resource requirements as needed for your environment.
 
 ```bash
+## on Saga HPC https://documentation.sigma2.no/hpc_machines/saga.html#saga
+
 module load Nextflow/24.04.2
-# module load singularity/rpm
+## Singularity is usually available by default on Saga
+# If needed, load a specific Singularity version:
+# module load singularity/your_version or contact your sysadmin :D
 
 export NXF_SINGULARITY_CACHEDIR=$PWD/container
 
@@ -171,7 +184,7 @@ nextflow run main.nf -profile saga,singularity \
   --outdir results/Brain \
   --atac_window 10000 \
   --external_ld true \
-  --ld_genotype /path/to/ld_genotype.vcf.gz \
+  --ld_genotype data/ref/ALL_chrome_phased_filtered_HWE_1e6_biSNPs_MAF_0.01.vcf.gz \
   --atac_qtl true \
   --eqtl_qtl true
 ```
