@@ -107,7 +107,7 @@ fetch() {
 
   if "${check_only}"; then
     echo "Checking ${url}"
-    if ! curl -fsI "${url}" -o /dev/null; then
+    if ! curl -kfsI "${url}" -o /dev/null; then
       echo "Link check failed for ${url}" >&2
       exit 1
     fi
@@ -116,7 +116,7 @@ fetch() {
 
   mkdir -p "$(dirname "${destination}")"
   echo "Downloading ${url} -> ${destination}"
-  if ! curl -fL "${url}" -o "${destination}"; then
+  if ! curl -k -fL "${url}" -o "${destination}"; then
     echo "Failed to download ${url}" >&2
     exit 1
   fi

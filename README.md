@@ -116,9 +116,9 @@ Ensure that both files are saved locally and paths are correctly set for downstr
 
 ```bash
 mkdir -p data/ref
-curl -L https://ftp.ensembl.org/pub/release-106/fasta/salmo_salar/dna/Salmo_salar.Ssal_v3.1.dna_sm.toplevel.fa.gz \
+curl -Lk https://ftp.ensembl.org/pub/release-106/fasta/salmo_salar/dna/Salmo_salar.Ssal_v3.1.dna_sm.toplevel.fa.gz \
   -o data/ref/Salmo_salar.Ssal_v3.1.dna_sm.toplevel.fa.gz
-curl -L https://ftp.ensembl.org/pub/release-106/gtf/salmo_salar/Salmo_salar.Ssal_v3.1.106.gtf.gz \
+curl -Lk https://ftp.ensembl.org/pub/release-106/gtf/salmo_salar/Salmo_salar.Ssal_v3.1.106.gtf.gz \
   -o data/ref/Salmo_salar.Ssal_v3.1.106.gtf.gz
 gunzip -k data/ref/Salmo_salar.Ssal_v3.1.dna_sm.toplevel.fa.gz
 gunzip -k data/ref/Salmo_salar.Ssal_v3.1.106.gtf.gz
@@ -130,8 +130,9 @@ The nf-rasqual paper uses an external LD genotype panel hosted on SalmoBase. Dow
 
 ```bash
 mkdir -p data/ref
-curl -L https://salmobase.org/datafiles/datasets/nf-rasqual-data/ALL_chrome_phased_filtered_HWE_1e6_biSNPs_MAF_0.01.vcf.gz \
+curl -Lk https://salmobase.org/datafiles/datasets/nf-rasqual-data/ALL_chrome_phased_filtered_HWE_1e6_biSNPs_MAF_0.01.vcf.gz \
   -o data/ref/ALL_chrome_phased_filtered_HWE_1e6_biSNPs_MAF_0.01.vcf.gz
+
 ```
 
 ## Download BAM and Count Files
