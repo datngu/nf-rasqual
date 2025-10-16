@@ -37,17 +37,17 @@ mkdir -p results/Brain
 
 ## run nextflow for Brain ATAC + RNA
 nextflow run main.nf -profile saga,singularity \
-  --meta data/meta/Brain.csv \
-  --genome data/ref/Salmo_salar.Ssal_v3.1.dna_sm.toplevel.fa \
-  --annotation data/ref/Salmo_salar.Ssal_v3.1.106.gtf \
-  --atac_bam "data/Brain/atac_bam/*.bam" \
-  --atac_count data/Brain/atac_consensus_peak_counts.txt \
-  --rna_bam "data/Brain/rna_bam/*.bam" \
-  --rna_count data/Brain/rna_gene_counts.tsv \
-  --genotype data/genotype.vcf.gz \
-  --outdir results/Brain \
+  --meta "$PWD/data/meta/Brain.csv" \
+  --genome "$PWD/data/ref/Salmo_salar.Ssal_v3.1.dna_sm.toplevel.fa" \
+  --annotation "$PWD/data/ref/Salmo_salar.Ssal_v3.1.106.gtf" \
+  --atac_bam "$PWD/data/Brain/atac_bam/*.bam" \
+  --atac_count "$PWD/data/Brain/atac_consensus_peak_counts.txt" \
+  --rna_bam "$PWD/data/Brain/rna_bam/*.bam" \
+  --rna_count "$PWD/data/Brain/rna_gene_counts.tsv" \
+  --genotype "$PWD/data/genotype.vcf.gz" \
+  --outdir "$PWD/results/Brain" \
   --atac_window 10000 \
   --external_ld true \
-  --ld_genotype data/ref/ALL_chrome_phased_filtered_HWE_1e6_biSNPs_MAF_0.01.vcf.gz \
+  --ld_genotype "$PWD/data/ref/ALL_chrome_phased_filtered_HWE_1e6_biSNPs_MAF_0.01.vcf.gz" \
   --atac_qtl true \
   --eqtl_qtl true
