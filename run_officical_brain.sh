@@ -3,18 +3,17 @@
 #SBATCH --nodes=1                
 #SBATCH --job-name=Brain   
 #SBATCH --mem=4G                
-#SBATCH --partition=gpu
-#SBATCH --mail-user=nguyen.thanh.dat@nmbu.no
+#SBATCH --mail-user=n.dat@outlook.com
 #SBATCH --mail-type=ALL
 
 
-module load BCFtools/1.10.2-GCC-8.3.0
-module load git/2.23.0-GCCcore-9.3.0-nodocs
+# module load BCFtools/1.10.2-GCC-8.3.0
+# module load git/2.23.0-GCCcore-9.3.0-nodocs
 module load Nextflow/21.03
 module load singularity/rpm
 
 
-export TOWER_ACCESS_TOKEN="YOURTOKEN"
+export TOWER_ACCESS_TOKEN="eyJ0aWQiOiA3OTAxfS4xNGY5NTFmOWNiZmEwNjZhOGFkYzliZTg3MDc4YWI4ZTRiYTk4ZmI5"
 
 
 
@@ -36,19 +35,20 @@ run_nextflow () {
   rna_bam=/mnt/ScratchProjects/Aqua-Faang/dat_projects/paper1/data/salmon/${tis}/rna_bam/*{.bam,.bai}
   rna_count=/mnt/ScratchProjects/Aqua-Faang/dat_projects/paper1/data/salmon/${tis}/rna_gene_level_count_salmon.txt    
   # nextflow configs
-  nextflow_res_dir=/mnt/ScratchProjects/Aqua-Faang/dat_projects/caQTL/result_eigenMT/${tis}
-  nextflow_trace_dir=/mnt/ScratchProjects/Aqua-Faang/dat_projects/caQTL/result_eigenMT/trace_dir_${tis}
-  nextflow_work_dir=/mnt/ScratchProjects/Aqua-Faang/dat_projects/caQTL/work_dir_eigenMT/${tis}
+  nextflow_res_dir=/mnt/ScratchProjects/Aqua-Faang/dat_projects/caQTL/result_eigenMT_oct2025/${tis}
+  nextflow_trace_dir=/mnt/ScratchProjects/Aqua-Faang/dat_projects/caQTL/result_eigenMT_oct2025/trace_dir_${tis}
+  nextflow_work_dir=/mnt/ScratchProjects/Aqua-Faang/dat_projects/caQTL/work_dir_eigenMT_oct2025/${tis}
   
   # try to make dirs
-  mkdir -p /mnt/ScratchProjects/Aqua-Faang/dat_projects/caQTL/result_eigenMT
-  mkdir -p /mnt/ScratchProjects/Aqua-Faang/dat_projects/caQTL/work_dir_eigenMT
+  mkdir -p /mnt/ScratchProjects/Aqua-Faang/dat_projects/caQTL/result_eigenMT_oct2025
+  mkdir -p /mnt/ScratchProjects/Aqua-Faang/dat_projects/caQTL/work_dir_eigenMT_oct2025
   
   # git clone https://github.com/datngu/nf-rasqual-dev.git
   # cd nf-rasqual-dev
-  git pull
+  # git pull
   export NXF_SINGULARITY_CACHEDIR=/mnt/users/ngda/sofware/singularity
   nextflow run main.nf -resume -w $nextflow_work_dir \
+      -profile orion,singularity \
       --meta $meta_file \
       --genome $genome \
       --annotation $annotation \
