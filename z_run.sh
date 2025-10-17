@@ -26,16 +26,16 @@ export export NXF_SINGULARITY_CACHEDIR=$PWD/container
 #   -o data/ref/ALL_chrome_phased_filtered_HWE_1e6_biSNPs_MAF_0.01.vcf.gz
 
 # # download ATAC
-# bash download.sh -t Brain -a ATAC
 
-# ## download RNA data
-# bash download.sh -t Brain -a RNA
+# bash download_atac.sh Brain
+
+# # ## download RNA data
+# bash download_rna.sh Brain
 
 ## results directory
 mkdir -p results/Brain
 
 
-## run nextflow for Brain ATAC + RNA
 ## run nextflow for Brain ATAC + RNA
 nextflow run main.nf -profile saga,singularity \
   --meta "$PWD/data/meta/Brain.csv" \
@@ -44,7 +44,7 @@ nextflow run main.nf -profile saga,singularity \
   --atac_bam "$PWD/data/Brain/atac_bam/*.bam" \
   --atac_count "$PWD/data/Brain/atac_consensus_peak_featureCounts.txt" \
   --rna_bam "$PWD/data/Brain/rna_bam/*.bam" \
-  --rna_count "$PWD/data/Brain/rna_gene_level_count_salmon.tsv" \
+  --rna_count "$PWD/data/Brain/rna_gene_level_count_salmon.txt" \
   --genotype "$PWD/data/genotype.vcf.gz" \
   --outdir "$PWD/results/Brain" \
   --atac_window 10000 \
