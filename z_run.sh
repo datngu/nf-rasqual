@@ -42,9 +42,9 @@ nextflow run main.nf -profile saga,singularity \
   --genome "$PWD/data/ref/Salmo_salar.Ssal_v3.1.dna_sm.toplevel.fa" \
   --annotation "$PWD/data/ref/Salmo_salar.Ssal_v3.1.106.gtf" \
   --atac_bam "$PWD/data/Brain/atac_bam/*.bam" \
-  --atac_count "$PWD/data/Brain/atac_consensus_peak_counts.txt" \
+  --atac_count "$PWD/data/Brain/atac_consensus_peak_featureCounts.txt" \
   --rna_bam "$PWD/data/Brain/rna_bam/*.bam" \
-  --rna_count "$PWD/data/Brain/rna_gene_counts.tsv" \
+  --rna_count "$PWD/data/Brain/rna_gene_level_count_salmon.tsv" \
   --genotype "$PWD/data/genotype.vcf.gz" \
   --outdir "$PWD/results/Brain" \
   --atac_window 10000 \
