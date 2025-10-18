@@ -12,25 +12,25 @@ module load Nextflow/24.04.2
 export export NXF_SINGULARITY_CACHEDIR=$PWD/container
 
 
-# download reference genome and annotation
-mkdir -p data/ref
-curl -Lk https://ftp.ensembl.org/pub/release-106/fasta/salmo_salar/dna/Salmo_salar.Ssal_v3.1.dna_sm.toplevel.fa.gz \
-  -o data/ref/Salmo_salar.Ssal_v3.1.dna_sm.toplevel.fa.gz
-curl -Lk https://ftp.ensembl.org/pub/release-106/gtf/salmo_salar/Salmo_salar.Ssal_v3.1.106.gtf.gz \
-  -o data/ref/Salmo_salar.Ssal_v3.1.106.gtf.gz
-gunzip -k data/ref/Salmo_salar.Ssal_v3.1.dna_sm.toplevel.fa.gz
-gunzip -k data/ref/Salmo_salar.Ssal_v3.1.106.gtf.gz
+# # download reference genome and annotation
+# mkdir -p data/ref
+# curl -Lk https://ftp.ensembl.org/pub/release-106/fasta/salmo_salar/dna/Salmo_salar.Ssal_v3.1.dna_sm.toplevel.fa.gz \
+#   -o data/ref/Salmo_salar.Ssal_v3.1.dna_sm.toplevel.fa.gz
+# curl -Lk https://ftp.ensembl.org/pub/release-106/gtf/salmo_salar/Salmo_salar.Ssal_v3.1.106.gtf.gz \
+#   -o data/ref/Salmo_salar.Ssal_v3.1.106.gtf.gz
+# gunzip -k data/ref/Salmo_salar.Ssal_v3.1.dna_sm.toplevel.fa.gz
+# gunzip -k data/ref/Salmo_salar.Ssal_v3.1.106.gtf.gz
 
-# download genotype reference
-curl -Lk https://salmobase.org/datafiles/datasets/nf-rasqual-data/ALL_chrome_phased_filtered_HWE_1e6_biSNPs_MAF_0.01.vcf.gz \
-  -o data/ref/ALL_chrome_phased_filtered_HWE_1e6_biSNPs_MAF_0.01.vcf.gz
+# # download genotype reference
+# curl -Lk https://salmobase.org/datafiles/datasets/nf-rasqual-data/ALL_chrome_phased_filtered_HWE_1e6_biSNPs_MAF_0.01.vcf.gz \
+#   -o data/ref/ALL_chrome_phased_filtered_HWE_1e6_biSNPs_MAF_0.01.vcf.gz
 
-# download ATAC
+# # download ATAC
 
-bash download_atac.sh Brain
+# bash download_atac.sh Brain
 
-# ## download RNA data
-bash download_rna.sh Brain
+# # ## download RNA data
+# bash download_rna.sh Brain
 
 ## results directory
 mkdir -p results/Brain
