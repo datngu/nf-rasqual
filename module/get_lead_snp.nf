@@ -18,12 +18,12 @@ process ATAC_MERGE_rasqual_normial {
     path all_inputs
 
     output:
-    path("obs_rasqual_normial_pval.txt")
+    path("obs_rasqual_randomized.txt")
 
 
     script:
     """
-    cat *_formated_EigenMT.txt >> obs_rasqual_normial_pval.txt
+    cat *_formated_EigenMT.txt >> obs_rasqual_randomized.txt
     """
 }
 
@@ -38,17 +38,18 @@ process ATAC_MERGE_rasqual_normial_permute {
     path all_inputs
 
     output:
-    path("nul_rasqual_normial_pval.txt")
+    path("nul_rasqual_randomized.txt")
 
 
     script:
     """
-    cat *_formated_EigenMT.txt >> nul_rasqual_normial_pval.txt
+    cat *_formated_EigenMT.txt >> nul_rasqual_randomized.txt
     """
 }
 
 
 process ATAC_GET_lead_SNP {
+    cache false
     container 'ndatth/rasqual:v0.0.0'
     publishDir "${params.outdir}/ATAC_GET_lead_SNP", mode: 'copy', overwrite: true
     memory '8 GB'
@@ -59,17 +60,18 @@ process ATAC_GET_lead_SNP {
     path normial_merged
 
     output:
-    path("obs_rasqual_normial_pval_lead_snp.txt")
+    path("obs_rasqual_randomized_tie_lead_snp.txt")
 
 
     script:
     """
-    extract_lead_SNPs_nomial_pval.py --normial $normial_merged --eigenMT $eigenMT_merged > obs_rasqual_normial_pval_lead_snp.txt
+    extract_lead_snp_ties.py --normial $normial_merged --eigenMT $eigenMT_merged > obs_rasqual_randomized_tie_lead_snp.txt
     """
 }
 
 
 process ATAC_GET_lead_SNP_permute {
+    cache false
     container 'ndatth/rasqual:v0.0.0'
     publishDir "${params.outdir}/ATAC_GET_lead_SNP_permute", mode: 'copy', overwrite: true
     memory '8 GB'
@@ -80,12 +82,12 @@ process ATAC_GET_lead_SNP_permute {
     path normial_merged
 
     output:
-    path("nul_rasqual_normial_pval_lead_snp.txt")
+    path("nul_rasqual_randomized_tie_lead_snp.txt")
 
 
     script:
     """
-    extract_lead_SNPs_nomial_pval.py --normial $normial_merged --eigenMT $eigenMT_merged > nul_rasqual_normial_pval_lead_snp.txt
+    extract_lead_snp_ties.py --normial $normial_merged --eigenMT $eigenMT_merged > nul_rasqual_randomized_tie_lead_snp.txt
     """
 }
 
@@ -103,12 +105,12 @@ process RNA_MERGE_rasqual_normial {
     path all_inputs
 
     output:
-    path("obs_rasqual_normial_pval.txt")
+    path("obs_rasqual_randomized.txt")
 
 
     script:
     """
-    cat *_formated_EigenMT.txt >> obs_rasqual_normial_pval.txt
+    cat *_formated_EigenMT.txt >> obs_rasqual_randomized.txt
     """
 }
 
@@ -123,17 +125,18 @@ process RNA_MERGE_rasqual_normial_permute {
     path all_inputs
 
     output:
-    path("nul_rasqual_normial_pval.txt")
+    path("nul_rasqual_randomized.txt")
 
 
     script:
     """
-    cat *_formated_EigenMT.txt >> nul_rasqual_normial_pval.txt
+    cat *_formated_EigenMT.txt >> nul_rasqual_randomized.txt
     """
 }
 
 
 process RNA_GET_lead_SNP {
+    cache false
     container 'ndatth/rasqual:v0.0.0'
     publishDir "${params.outdir}/RNA_GET_lead_SNP", mode: 'copy', overwrite: true
     memory '8 GB'
@@ -144,17 +147,18 @@ process RNA_GET_lead_SNP {
     path normial_merged
 
     output:
-    path("obs_rasqual_normial_pval_lead_snp.txt")
+    path("obs_rasqual_randomized_tie_lead_snp.txt")
 
 
     script:
     """
-    extract_lead_SNPs_nomial_pval.py --normial $normial_merged --eigenMT $eigenMT_merged > obs_rasqual_normial_pval_lead_snp.txt
+    extract_lead_snp_ties.py --normial $normial_merged --eigenMT $eigenMT_merged > obs_rasqual_randomized_tie_lead_snp.txt
     """
 }
 
 
 process RNA_GET_lead_SNP_permute {
+    cache false
     container 'ndatth/rasqual:v0.0.0'
     publishDir "${params.outdir}/RNA_GET_lead_SNP_permute", mode: 'copy', overwrite: true
     memory '8 GB'
@@ -165,11 +169,11 @@ process RNA_GET_lead_SNP_permute {
     path normial_merged
 
     output:
-    path("nul_rasqual_normial_pval_lead_snp.txt")
+    path("nul_rasqual_randomized_tie_lead_snp.txt")
 
 
     script:
     """
-    extract_lead_SNPs_nomial_pval.py --normial $normial_merged --eigenMT $eigenMT_merged > nul_rasqual_normial_pval_lead_snp.txt
+    extract_lead_snp_ties.py --normial $normial_merged --eigenMT $eigenMT_merged > nul_rasqual_randomized_tie_lead_snp.txt
     """
 }

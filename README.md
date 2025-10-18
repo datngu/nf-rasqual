@@ -53,9 +53,9 @@ Memory and CPU usage may scale with the number of samples and genomic data size.
 | ----------------- | -------------------------------- | ----------------------------------------------------------------- | -------------------------------------- |
 | `--genome`        | Yes                              | Reference genome FASTA used when preparing rasqual inputs.        | `data/ref/genome.fa`                   |
 | `--annotation`    | Yes                              | Gene annotation GTF parsed for RNA gene definitions.              | `data/ref/annotation.gtf`              |
-| `--atac_bam`      | Conditional (`--atac_qtl true`)  | ATAC BAM files used for allele-specific counting.                 | `data/atac_bam/*.bam`                  |
+| `--atac_bam`      | Conditional (`--atac_qtl true`)  | ATAC BAM files used for allele-specific counting.                 | `data/atac_bam/*{.bam,.bai}`                  |
 | `--atac_count`    | Conditional (`--atac_qtl true`)  | ATAC peak count matrix filtered before rasqual.                   | `data/atac_consensus_peak_featureCounts.txt` |
-| `--rna_bam`       | Conditional (`--eqtl_qtl true`)  | RNA BAM files used for allele-specific counting.                  | `data/rna_bam/*.bam`                   |
+| `--rna_bam`       | Conditional (`--eqtl_qtl true`)  | RNA BAM files used for allele-specific counting.                  | `data/rna_bam/*{.bam,.bai}`                   |
 | `--rna_count`     | Conditional (`--eqtl_qtl true`)  | RNA gene-level counts filtered before rasqual.                    | `data/rna_gene_level_count_salmon.txt` |
 | `--genotype`      | Yes                              | Sample genotype VCF driving cis-QTL discovery.                    | `data/genotype.vcf.gz`                 |
 | `--ld_genotype`   | Conditional (`--external_ld true`)  | External LD panel if running eigenMT with external LD.            | `data/ld_genotype.vcf.gz`              |
@@ -176,9 +176,9 @@ nextflow run main.nf -profile saga,singularity \
   --meta "$PWD/data/meta/Brain.csv" \
   --genome "$PWD/data/ref/Salmo_salar.Ssal_v3.1.dna_sm.toplevel.fa" \
   --annotation "$PWD/data/ref/Salmo_salar.Ssal_v3.1.106.gtf" \
-  --atac_bam "$PWD/data/Brain/atac_bam/*.bam" \
+  --atac_bam "$PWD/data/Brain/atac_bam/*{.bam,.bai}" \
   --atac_count "$PWD/data/Brain/atac_consensus_peak_counts.txt" \
-  --rna_bam "$PWD/data/Brain/rna_bam/*.bam" \
+  --rna_bam "$PWD/data/Brain/rna_bam/*{.bam,.bai}" \
   --rna_count "$PWD/data/Brain/rna_gene_counts.tsv" \
   --genotype "$PWD/data/genotype.vcf.gz" \
   --outdir "$PWD/results/Brain" \
@@ -190,7 +190,7 @@ nextflow run main.nf -profile saga,singularity \
 
 ```
 
-**FOR REVIEWERS:** We now tested the pipeline on a completely different system and can guarantee its functionality and fully reproducible. If you you would like to test the pipeline on your system. The provided `nextflow.config` is a template and may require modifications to suit your specific HPC environment. Adjust parameters and specify correct profile selection according to your system's requirements and setups. We can't help with your specific setup, but we recommend consulting the Nextflow documentation or your system admin for further customization: [https://www.nextflow.io/docs/latest/config.html](https://www.nextflow.io/docs/latest/config.html).
+**FOR REVIEWERS:** We now tested the pipeline on two completely different system and can guarantee its functionality and fully reproducible. If you you would like to test the pipeline on your system. The provided `nextflow.config` is a template and may require modifications to suit your specific HPC environment. Adjust parameters and specify correct profile selection according to your system's requirements and setups. We can't help with your specific setup, but we recommend consulting the Nextflow documentation or your system admin for further customization: [https://www.nextflow.io/docs/latest/config.html](https://www.nextflow.io/docs/latest/config.html).
 
 
 The example above runs both ATAC-QTL and eQTL components. Remove `--atac_bam`, `--atac_count`, and `--atac_qtl true` if you only wish to execute the RNA component. Repeat the same download and execution steps for the other tissues (Gill, Gonad, Liver, Muscle) by swapping the tissue name in the commands; doing so reproduces the analyses performed in the nf-rasqual paper. Adjust `--outdir`, and `-w` (Nextflow work directory) as needed to point to project-specific locations with sufficient storage.
