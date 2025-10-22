@@ -147,12 +147,10 @@ The repository ships with a helper script that fetches the BAM (and .bai) and fe
 
 ```bash
 ## the download may take a few hours depending on your internet connection
-# Download ATAC files (consensus peak counts + BAMs)
-bash download.sh -t Brain -a ATAC
+bash download_atac.sh Brain
 
-## the download may take a few hours depending on your internet connection
-# Download RNA-seq files (Salmon counts + BAMs)
-bash download.sh -t Brain -a RNA
+# ## download RNA data
+bash download_rna.sh Brain
 
 ```
 
